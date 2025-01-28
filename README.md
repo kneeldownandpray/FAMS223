@@ -236,9 +236,9 @@ cd /var/www/FAMS223/focusfrontend
 npm install
 ```
 
-Make sure the ```
+Make sure the 
 .env
-```
+
 
  file is properly configured with your database credentials. Then run the migrations:
 
@@ -263,9 +263,8 @@ your_server_ip
 
    for any issues.
 - **Permission issues**: Make sure the correct file and folder permissions are set on your project directory.
-- **Database connection issues**: Verify that your MySQL server is running and that your ```
+- **Database connection issues**: Verify that your MySQL server is running and that your 
   .env
-  ```
 
    file is correctly configured.
 
