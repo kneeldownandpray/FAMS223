@@ -57,11 +57,6 @@ sudo systemctl start nginx
 sudo systemctl enable nginx
 ```
 
-Check if Nginx is working by navigating to ```
-http://your_server_ip
-```
-
- in a browser.
 
 Install PHP 8.2 along with necessary extensions:
 
