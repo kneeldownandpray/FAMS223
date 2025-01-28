@@ -97,9 +97,9 @@ Edit the MySQL/MariaDB configuration file to bind MySQL to all IP addresses:
 sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
 ```
 
-Find the line with ```
+Find the line with 
 bind-address
-```
+
 
  and change it to:
 
