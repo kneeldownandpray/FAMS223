@@ -128,9 +128,9 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-This will allow the ```
+This will allow the 
 fams
-```
+
 
  user to connect from any IP address.
 
