@@ -32,7 +32,7 @@ class ForgotPasswordController extends Controller
         $user->createToken($token, ['password-reset'])->plainTextToken;
     
         // Create the reset link pointing to the frontend
-        $resetLink = 'http://192.168.0.81:9001/resetpassword?token=' . $token . '&email=' . urlencode($email);
+        $resetLink = 'http://192.168.0.236:9001/resetpassword?token=' . $token . '&email=' . urlencode($email);
     
         // Send the email
         Mail::raw("Click the following link to reset your password: $resetLink", function ($message) use ($email) {
