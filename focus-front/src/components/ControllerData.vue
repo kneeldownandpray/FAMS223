@@ -1,0 +1,194 @@
+<template>
+    <q-page class="q-pa-md">
+      <h2 class="q-mb-md">Saved Data</h2>
+  
+      <q-card v-if="savedData.length" class="q-mb-md">
+        <q-card-section>
+          <!-- Table for displaying data -->
+          <q-table
+            :rows="savedData"
+            :columns="columns"
+            row-key="timestamp"
+            :pagination="pagination"
+            flat
+          >
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                <q-td :props="props" key="pattern">
+                  <q-input
+                    v-model="props.row.pattern"
+                    label="Plate Pattern"
+                    @blur="updateData(props.row)"
+                    dense
+                    filled
+                    class="q-mb-none"
+                  />
+                </q-td>
+                <q-td :props="props" key="color">
+    <div class="q-mb-xs">
+      <span :style="{ color: props.row.color }">{{ props.row.color }}</span>
+    </div>
+    <div :style="{ backgroundColor: props.row.color }" style="height: 20px; width: 20px; border-radius: 50%;"></div>
+  </q-td>
+  
+                <q-td :props="props" key="vehicleType">
+                  {{ props.row.vehicleType }}
+                </q-td>
+                <q-td :props="props" key="timestamp">
+                  {{ formatDate(props.row.timestamp) }}
+                </q-td>
+                <q-td :props="props" key="image">
+                  <q-img
+                    :src="props.row.image"
+                    :alt="`Plate Image: ${props.row.pattern}`"
+                    width="50px"
+                    @click="showImage(props.row.image)"
+                    class="thumbnail-image"
+                  />
+                </q-td>
+                <q-td :props="props" key="actions">
+                    <q-btn @click="alertMaintenance()" icon="person" color="black" flat size="sm" />
+                  <q-btn @click="editData(props.row)" icon="edit" color="primary" flat size="sm" />
+                  <q-btn @click="deleteData(props.row)" icon="delete" color="negative" flat size="sm" />
+                </q-td>
+              </q-tr>
+            </template>
+          </q-table>
+        </q-card-section>
+      </q-card>
+  
+      <q-card v-else>
+        <q-card-section>No data saved yet.</q-card-section>
+      </q-card>
+  
+      <!-- Image Viewer Modal -->
+      <q-dialog v-model="imageDialogVisible" style="z-index: 1111111;">
+        <q-card style="min-width: 350px;">
+          <q-card-section>
+            <q-img :src="selectedImage" alt="Full-size Plate Image" />
+          </q-card-section>
+          <q-card-actions>
+            <q-btn flat label="Close" color="primary" @click="imageDialogVisible = false" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+    </q-page>
+  </template>
+  
+  <script>
+  import { date } from 'quasar';
+  
+  export default {
+    data() {
+      return {
+        savedData: [],
+        pagination: {
+          rowsPerPage: 5, // Limit rows per page
+        },
+        columns: [
+          { name: 'pattern', label: 'Plate Pattern', align: 'left', field: 'pattern' },
+          { name: 'color', label: 'Color', align: 'left', field: 'color' },
+          { name: 'vehicleType', label: 'Vehicle Type', align: 'left', field: 'vehicleType' },
+          { name: 'timestamp', label: 'Timestamp', align: 'left', field: 'timestamp' },
+          { name: 'image', label: 'Image', align: 'left', field: 'image' },
+          { name: 'actions', label: 'Actions', align: 'center', field: 'actions' },
+        ],
+        imageDialogVisible: false, // To control the image modal visibility
+        selectedImage: '', // To store the selected image URL
+      };
+    },
+    mounted() {
+      this.loadData();
+    },
+    methods: {
+      // Load data from localStorage
+      alertMaintenance(){
+        alert("This funtion is under maintenance ( purpose of this is show profile of registered user)");
+      },
+      loadData() {
+        const plates = JSON.parse(localStorage.getItem("permanentPlates")) || [];
+        const colors = JSON.parse(localStorage.getItem("mostFrequentColors")) || [];
+        const vehicleTypes = JSON.parse(localStorage.getItem("mostFrequentVehicleTypes")) || [];
+        const images = JSON.parse(localStorage.getItem("clearPlateImages")) || [];
+  
+        // Merge all data into a single array for display
+        this.savedData = plates.map((plate, index) => {
+          return {
+            ...plate,
+            color: colors[index]?.color || "",
+            vehicleType: vehicleTypes[index]?.vehicleType || "",
+            image: images[index]?.image || "",
+          };
+        });
+      },
+  
+      // Format timestamp into a more readable format
+      formatDate(timestamp) {
+        return date.formatDate(timestamp, 'MMMM D, YYYY (h:mm A)');
+      },
+  
+      // Edit functionality
+      editData(row) {
+        console.log("Edit item:", row);
+        // Implement your editing logic here (e.g., show a modal or navigate to an edit page)
+      },
+  
+      // Update data in localStorage
+      updateData(row) {
+        const updatedItem = row;
+        let plates = JSON.parse(localStorage.getItem("permanentPlates")) || [];
+        const index = plates.findIndex(plate => plate.timestamp === updatedItem.timestamp);
+        if (index !== -1) {
+          plates[index] = { ...updatedItem, timestamp: new Date().toISOString() }; // Update timestamp on edit
+          localStorage.setItem("permanentPlates", JSON.stringify(plates));
+        }
+      },
+  
+      // Delete functionality
+      deleteData(row) {
+        if (confirm("Are you sure you want to delete this item?")) {
+          // Remove data from localStorage
+          let plates = JSON.parse(localStorage.getItem("permanentPlates")) || [];
+          let colors = JSON.parse(localStorage.getItem("mostFrequentColors")) || [];
+          let vehicleTypes = JSON.parse(localStorage.getItem("mostFrequentVehicleTypes")) || [];
+          let images = JSON.parse(localStorage.getItem("clearPlateImages")) || [];
+  
+          const index = plates.findIndex(plate => plate.timestamp === row.timestamp);
+          if (index !== -1) {
+            plates.splice(index, 1);
+            colors.splice(index, 1);
+            vehicleTypes.splice(index, 1);
+            images.splice(index, 1);
+  
+            // Update localStorage
+            localStorage.setItem("permanentPlates", JSON.stringify(plates));
+            localStorage.setItem("mostFrequentColors", JSON.stringify(colors));
+            localStorage.setItem("mostFrequentVehicleTypes", JSON.stringify(vehicleTypes));
+            localStorage.setItem("clearPlateImages", JSON.stringify(images));
+  
+            // Refresh data
+            this.loadData();
+          }
+        }
+      },
+  
+      // Function to show the larger image in a modal
+      showImage(imageSrc) {
+        this.selectedImage = imageSrc;
+        this.imageDialogVisible = true;
+      },
+    },
+  };
+  </script>
+  
+  <style scoped>
+  .thumbnail-image {
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-top: 5px;
+    border-radius: 4px;
+  }
+  </style>
+  
