@@ -14,6 +14,8 @@
   "dependencies": {
     "@quasar/extras": "^1.16.11",
     "@quasar/quasar-ui-qcalendar": "^4.0.0-beta.19",
+    "@tensorflow-models/coco-ssd": "^2.2.3",
+    "@tensorflow/tfjs": "^4.22.0",
     "axios": "^1.7.4",
     "docx": "^9.1.1",
     "docxtemplater": "^3.58.1",
@@ -32,6 +34,7 @@
     "pizzip": "^3.1.7",
     "quasar": "^2.16.4",
     "socket.io-client": "^4.8.0",
+    "tesseract.js": "^6.0.0",
     "vite-plugin-env-compatible": "^2.0.1",
     "vue": "^3.0.0",
     "vue-echarts": "^6.5.4",

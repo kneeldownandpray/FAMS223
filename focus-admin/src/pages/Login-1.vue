@@ -118,6 +118,6 @@ export default {
 
 <style scoped>
 .bg-image {
-  background-color: #242340;
+  background-color: #7f1416;
 }
 </style>

@@ -26,7 +26,7 @@
                     playsinline
                     muted
                     class="fit"
-                    style="border: 1px solid #ddd; width: 100%; max-width: 640px; opacity: 0; height: 1px !important; width: 1px !important;"
+                    style="border: 1px solid #ddd; width: 100%; max-width: 640px;  "
                   ></video>
                   <canvas :ref="setCanvasRef(index)" style="border: 1px solid #ddd; width: 100%;"></canvas>
                 </q-card-section>
@@ -161,7 +161,7 @@ export default {
 
     onMounted(async () => {
       await detectCameras();
-      await startCameras();
+      // await startCameras();
     });
 
     return {
