@@ -65,7 +65,12 @@
       class="bg-primary text-white"
     >
       <q-list pointers>
-
+        <div style="padding-left:60px;padding-right:60px; padding-top: 5px;padding-bottom: 15px;">
+          <q-img
+            src="../assets/logowhtie.png"
+          width="100"
+          />
+        </div>
         <q-item  to="/global-chat" active-class="q-item-no-link-highlighting">
        <q-item-section avatar>
          <q-icon name="chat" />
