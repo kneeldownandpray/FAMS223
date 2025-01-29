@@ -65,7 +65,7 @@
       class="bg-primary text-white"
     >
       <q-list pointers>
-        <div style="padding-left:60px;padding-right:60px; padding-top: 5px;padding-bottom: 15px;">
+        <div style="padding-left:60px;padding-right:70px; padding-top: 5px;padding-bottom: 15px;">
           <q-img
             src="../assets/logowhtie.png"
           width="100"
