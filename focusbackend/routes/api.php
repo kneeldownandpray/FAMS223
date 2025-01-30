@@ -13,12 +13,22 @@ use App\Http\Controllers\ReelsController;
 use App\Http\Controllers\VideoScrollController;
 use App\Http\Controllers\HiredController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\SkillController;
+use App\Http\Controllers\CertificationController;
 
 
 // Middleware-protected route to fetch the authenticated user's details
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+
+Route::resource('resumes', ResumeController::class);
+Route::resource('resumes.skills', SkillController::class);
+Route::resource('resumes.certifications', CertificationController::class);
+// Route::resource('resumes.workExperiences', WorkExperienceController::class);
+
 
 // Authentication Routes
 // Route::post('register', [AuthController::class, 'register']); 
@@ -66,6 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/resumes/video/{userId}', [ResumeController::class, 'getByUserVideo']);
     Route::apiResource('educational-attainments', EducationalAttainmentController::class);
     Route::apiResource('work-experiences', WorkExperienceController::class);
+    // Route::post('work-experiences', [WorkExperienceController::class, 'test']);
     Route::post('/user-videos', [UserVideoController::class, 'store']);    // Create new video
     Route::get('/user-videos', [UserVideoController::class, 'index']);     // Fetch all videos
     Route::get('/user-videos/{id}', [UserVideoController::class, 'show']); // Fetch a single video

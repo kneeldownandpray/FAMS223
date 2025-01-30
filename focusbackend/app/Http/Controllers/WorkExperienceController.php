@@ -1,61 +1,67 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\WorkExperience;
+use App\Models\JobDescription;
 use Illuminate\Http\Request;
 
 class WorkExperienceController extends Controller
 {
-    public function index()
-    {
-        return WorkExperience::all();
-    }
-
-    public function show($id)
-    {
-        return WorkExperience::findOrFail($id);
-    }
-
+    // Store a new WorkExperience along with Job Descriptions
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'resume_id' => 'required|integer',
+        $request->validate([
+            'resume_id' => 'required|integer|exists:resumes,id',
             'company_name' => 'required|string|max:255',
             'company_address' => 'required|string|max:255',
             'position' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
-            'job_description' => 'nullable|string'
+            'job_descriptions' => 'required|array',
+            'job_descriptions.*.description' => 'required|string|max:255',
         ]);
 
-        $workExperience = WorkExperience::create($data);
+        // Create Work Experience
+        $workExperience = WorkExperience::create($request->only([
+            'resume_id', 'company_name', 'company_address', 'position', 'start_date', 'end_date'
+        ]));
 
-        return response()->json($workExperience, 201);
+        // Save Job Descriptions
+        $jobDescriptions = collect($request->job_descriptions)->map(fn ($jobDesc) => new JobDescription([
+            'description' => $jobDesc['description']
+        ]));
+
+        $workExperience->jobDescriptions()->saveMany($jobDescriptions);
+
+        return response()->json($workExperience->load('jobDescriptions'), 201);
     }
 
-    public function update(Request $request, $id)
+    // Update an existing WorkExperience with Job Descriptions
+    public function update(Request $request, WorkExperience $workExperience)
     {
-        $data = $request->validate([
-            'company_name' => 'nullable|string|max:255',
-            'company_address' => 'nullable|string|max:255',
-            'position' => 'nullable|string|max:255',
-            'start_date' => 'nullable|date',
+        $request->validate([
+            'company_name' => 'required|string|max:255',
+            'company_address' => 'required|string|max:255',
+            'position' => 'required|string|max:255',
+            'start_date' => 'required|date',
             'end_date' => 'nullable|date',
-            'job_description' => 'nullable|string'
+            'job_descriptions' => 'required|array',
+            'job_descriptions.*.description' => 'required|string|max:255',
         ]);
 
-        $workExperience = WorkExperience::findOrFail($id);
-        $workExperience->update($data);
+        // Update Work Experience
+        $workExperience->update($request->only([
+            'company_name', 'company_address', 'position', 'start_date', 'end_date'
+        ]));
 
-        return response()->json($workExperience);
-    }
+        // Delete old Job Descriptions & Save new ones
+        $workExperience->jobDescriptions()->delete();
+        $jobDescriptions = collect($request->job_descriptions)->map(fn ($jobDesc) => new JobDescription([
+            'description' => $jobDesc['description']
+        ]));
 
-    public function destroy($id)
-    {
-        $workExperience = WorkExperience::findOrFail($id);
-        $workExperience->delete();
+        $workExperience->jobDescriptions()->saveMany($jobDescriptions);
 
-        return response()->json(null, 204);
+        return response()->json($workExperience->load('jobDescriptions'), 200);
     }
 }
