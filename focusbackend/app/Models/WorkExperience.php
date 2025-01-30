@@ -16,11 +16,17 @@ class WorkExperience extends Model
         'position',
         'start_date',
         'end_date',
-        'job_description'
     ];
 
+    // Define the inverse relationship with Resume
     public function resume()
     {
         return $this->belongsTo(Resume::class);
+    }
+
+    // Relationship to JobDescription (many-to-many)
+    public function jobDescriptions()
+    {
+        return $this->hasMany(JobDescription::class); // Define one-to-many relationship with JobDescription
     }
 }

@@ -23,6 +23,7 @@ class Resume extends Model
         'contact_no',
         'profession'
     ];
+
     // Define the relationship with User
     public function user()
     {
@@ -38,8 +39,22 @@ class Resume extends Model
     {
         return $this->hasMany(WorkExperience::class);
     }
+
+    // Relationship to Skills
+    public function skills()
+    {
+        return $this->hasMany(Skill::class); // Define one-to-many relationship with Skill
+    }
+
+    // Relationship to Certifications
+    public function certifications()
+    {
+        return $this->hasMany(Certification::class); // Define one-to-many relationship with Certification
+    }
+
+    // Relationship to User Videos
     public function userVideos()
-{
-    return $this->hasMany(UserVideo::class, 'user_id', 'user_id');
-}
+    {
+        return $this->hasMany(UserVideo::class, 'user_id', 'user_id');
+    }
 }
