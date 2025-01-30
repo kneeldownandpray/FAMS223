@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::resource('resumes', ResumeController::class);
 Route::resource('resumes.skills', SkillController::class);
 Route::resource('resumes.certifications', CertificationController::class);
-Route::resource('resumes.workExperiences', WorkExperienceController::class);
+// Route::resource('resumes.workExperiences', WorkExperienceController::class);
 
 
 // Authentication Routes
@@ -76,6 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/resumes/video/{userId}', [ResumeController::class, 'getByUserVideo']);
     Route::apiResource('educational-attainments', EducationalAttainmentController::class);
     Route::apiResource('work-experiences', WorkExperienceController::class);
+    // Route::post('work-experiences', [WorkExperienceController::class, 'test']);
     Route::post('/user-videos', [UserVideoController::class, 'store']);    // Create new video
     Route::get('/user-videos', [UserVideoController::class, 'index']);     // Fetch all videos
     Route::get('/user-videos/{id}', [UserVideoController::class, 'show']); // Fetch a single video
