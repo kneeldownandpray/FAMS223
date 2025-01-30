@@ -53,15 +53,20 @@
       <q-separator  />
       <div  class="text-h6 q-mb-md">Work Experiences</div>
       <q-list bordered >
-        <q-item v-for="work in resume.work_experiences" :key="work.id">
+        <q-item class="q-mt-sm" v-for="work in resume.work_experiences" :key="work.id">
           <q-item-section>
-            <div><strong class="q-mr-sm">Company:</strong> {{ work.company_name }}</div>
+            <div style="font-size: 25px;"><strong class="q-mr-sm">{{ work.company_name }}</strong> </div>
             <div><strong class="q-mr-sm">Address:</strong> {{ work.company_address }}</div>
             <div><strong class="q-mr-sm">Position:</strong> {{ work.position }}</div>
             <div><strong class="q-mr-sm">Start Date:</strong> {{ work.start_date }}</div>
             <div><strong class="q-mr-sm">End Date:</strong> {{ work.end_date }}</div>
-            <div><strong class="q-mr-sm">Description:</strong> {{ work.job_descriptions }}</div>
+            <div class="q-mt-sm"><strong class="q-mt-lg">Description:</strong> </div>
+                      <div v-for="work2 in work.job_descriptions" :key="work.id">
+                        <div style="display: flex; align-items: center;" class="q-ml-sm"><div class="q-mr-sm" style="background-color: black; height: 6px; width: 6px; border-radius: 3px; "></div> 
+                        {{ work2.description }}</div>
+                      </div>
           </q-item-section>
+          
         </q-item>
         <q-btn class="q-mt-sm q-mb-sm q-ml-sm" label="Add Work Experience" @click="openWorkDialog" color="primary" icon="add" />
       </q-list>
@@ -77,7 +82,7 @@
             {{ work.skill_name }} </div>
           </q-item-section>
         </q-item>
-        <q-btn class="q-mt-sm q-mb-sm q-ml-sm" label="Add Certificates" @click="openWorkDialog" color="primary" icon="add" />
+        <q-btn class="q-mt-sm q-mb-sm q-ml-sm" label="Add Skills" @click="openWorkDialog" color="primary" icon="add" />
       </q-list>
 
 
