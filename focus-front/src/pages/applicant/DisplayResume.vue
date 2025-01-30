@@ -60,11 +60,41 @@
             <div><strong class="q-mr-sm">Position:</strong> {{ work.position }}</div>
             <div><strong class="q-mr-sm">Start Date:</strong> {{ work.start_date }}</div>
             <div><strong class="q-mr-sm">End Date:</strong> {{ work.end_date }}</div>
-            <div><strong class="q-mr-sm">Description:</strong> {{ work.job_description }}</div>
+            <div><strong class="q-mr-sm">Description:</strong> {{ work.job_descriptions }}</div>
           </q-item-section>
         </q-item>
         <q-btn class="q-mt-sm q-mb-sm q-ml-sm" label="Add Work Experience" @click="openWorkDialog" color="primary" icon="add" />
       </q-list>
+
+ <!-- Skills -->
+ <br>
+ <q-separator  />
+      <div  class="text-h6 q-mb-md">Skills</div>
+      <q-list bordered >
+        <q-item v-for="work in resume.skills" :key="work.id">
+          <q-item-section>
+            <div style="display: flex; align-items: center;" class="q-ml-sm"><div class="q-mr-sm" style="background-color: black; height: 6px; width: 6px; border-radius: 3px; "></div> 
+            {{ work.skill_name }} </div>
+          </q-item-section>
+        </q-item>
+        <q-btn class="q-mt-sm q-mb-sm q-ml-sm" label="Add Certificates" @click="openWorkDialog" color="primary" icon="add" />
+      </q-list>
+
+
+
+ <!-- Certificates -->
+<br>
+ <q-separator  />
+      <div  class="text-h6 q-mb-md">Certificates</div>
+      <q-list bordered >
+        <q-item v-for="work in resume.certifications" :key="work.id">
+          <q-item-section>
+            <div style="display: flex; align-items: center;" class="q-ml-sm"><div class="q-mr-sm" style="background-color: black; height: 6px; width: 6px; border-radius: 3px; "></div> {{ work.certificate_name }} ({{ work.year_received }})</div>
+          </q-item-section>
+        </q-item>
+        <q-btn class="q-mt-sm q-mb-sm q-ml-sm" label="Add Certificates" @click="openWorkDialog" color="primary" icon="add" />
+      </q-list>
+
 
 
       <!-- Education Dialog -->

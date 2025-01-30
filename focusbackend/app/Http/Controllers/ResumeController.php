@@ -18,7 +18,7 @@ class ResumeController extends Controller
         return Resume::with([
             'user:id,gender,birthday,email,address', 
             'educationalAttainments', 
-            'workExperiences', 
+            'workExperiences.jobDescriptions', // Include jobDescriptions
             'skills',  // Add skills relationship
             'certifications', // Add certifications relationship
         ])->get();
@@ -30,7 +30,7 @@ class ResumeController extends Controller
         return Resume::with([
             'user:id,gender,birthday,email,address', 
             'educationalAttainments', 
-            'workExperiences', 
+            'workExperiences.jobDescriptions', // Include jobDescriptions
             'skills', 
             'certifications'
         ])->findOrFail($id);
@@ -116,7 +116,7 @@ class ResumeController extends Controller
         $resume = Resume::with([
             'user:id,gender,birthday,email,address', 
             'educationalAttainments', 
-            'workExperiences', 
+            'workExperiences.jobDescriptions', // Include jobDescriptions
             'skills', 
             'certifications'
         ])
@@ -137,7 +137,7 @@ class ResumeController extends Controller
             $resume = Resume::with([
                 'user:id,gender,birthday,email,address',
                 'educationalAttainments',
-                'workExperiences',
+                'workExperiences.jobDescriptions',
                 'userVideos', // Include user videos
                 'skills',  // Include skills
                 'certifications',  // Include certifications
