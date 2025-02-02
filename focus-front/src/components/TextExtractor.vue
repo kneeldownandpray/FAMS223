@@ -15,6 +15,7 @@
   </template>
   
   <script>
+  import axios from 'axios';
   export default {
     name: "TextExtractor",
     props: {
@@ -71,7 +72,7 @@
   
         // Save data to localStorage
         if (this.mostCommonPattern && this.mostFrequentColor && this.mostFrequentVehicleType && this.selectedImage) {
-          this.saveToLocalStorage(
+          this.saveToDatabase(
             this.mostCommonPattern,
             this.mostFrequentColor,
             this.mostFrequentVehicleType,
@@ -173,44 +174,36 @@
   
         this.selectedImage = clearImage ? clearImage.image : null;
       },
-      saveToLocalStorage(pattern, color, vehicleType, image) {
-    console.log("Saving data to localStorage");
+      async saveToDatabase(pattern, color, vehicleType, image) {
+  console.log("Saving data to API");
+  const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/vehicle-records`;
+  const timestamp = new Date().toISOString();
   
-    const storageKey = "permanentPlates";
-    const storageColorKey = "mostFrequentColors";
-    const storageVehicleKey = "mostFrequentVehicleTypes";
-    const storageImageKey = "clearPlateImages"; // Updated key for storing images
-  
-    let storedPlates = JSON.parse(localStorage.getItem(storageKey)) || [];
-    let storedColors = JSON.parse(localStorage.getItem(storageColorKey)) || [];
-    let storedVehicleTypes = JSON.parse(localStorage.getItem(storageVehicleKey)) || [];
-    let storedImages = JSON.parse(localStorage.getItem(storageImageKey)) || []; // Initialize images array
-  
-    const timestamp = new Date().toISOString();
-  
-    // Add new data to respective arrays
-    storedPlates.push({ pattern, timestamp });
-    storedColors.push({ color, timestamp });
-    storedVehicleTypes.push({ vehicleType, timestamp });
-  
-    if (image) {
-      storedImages.push({ vehicleType, timestamp, image }); // Save image with vehicleType and timestamp
-    }
-  
-    // Save updated arrays back to localStorage
-    localStorage.setItem(storageKey, JSON.stringify(storedPlates));
-    localStorage.setItem(storageColorKey, JSON.stringify(storedColors));
-    localStorage.setItem(storageVehicleKey, JSON.stringify(storedVehicleTypes));
-    localStorage.setItem(storageImageKey, JSON.stringify(storedImages));
-  
-    console.log(`Saved to localStorage:
-      - Pattern: ${pattern}
-      - Color: ${color}
-      - Vehicle Type: ${vehicleType}
-      - Image: [Base64 data]
-      - Timestamp: ${timestamp}`);
-  },
-  
+  const formData = new FormData();
+  formData.append('pattern', pattern);
+  formData.append('color', color);
+  formData.append('vehicleType', vehicleType);
+  formData.append('image', image);  // If 'image' is a file object
+  formData.append('timestamp', timestamp);
+
+
+ 
+  try {
+
+    console.log("b46",pattern, color, vehicleType, image);
+    const response = await axios.post(apiUrl, formData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('access_token_employer')}`,
+        'Content-Type': 'multipart/form-data',  // This is required for file uploads
+      },
+    });
+
+    console.log("Data successfully saved:", response.data);
+  } catch (error) {
+    console.error("Error saving data to API:", error);
+  }
+},
+
   
       resetPlatesAfterDelay() {
         if (this.clearPlatesTimer) {
@@ -227,7 +220,7 @@
           this.mostFrequentVehicleType = null;
           this.selectedImage = null;
           this.$emit("clear-plates");
-        }, 10000); // 10 seconds delay
+        }, 1000); // 10 seconds delay
       },
     },
   };

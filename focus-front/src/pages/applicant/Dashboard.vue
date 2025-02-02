@@ -101,7 +101,7 @@ export default {
           console.log("No new detection for 5 seconds, sending for analysis...");
           this.sendToDecisionMaker();
         }
-      }, 5000); // 5 seconds
+      }, 2500); // 5 seconds
     },
     sendToDecisionMaker() {
       this.sendForAnalysis = true; // Trigger analysis in DecisionMaker

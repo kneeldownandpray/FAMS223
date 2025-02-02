@@ -76,7 +76,7 @@
      </q-item>
 
         <!-- Display based on user.account_type safely -->
-        <q-item v-if="user?.account_type === 6" to="/applicant/Resume" active-class="q-item-no-link-highlighting">
+        <!-- <q-item v-if="user?.account_type === 6" to="/applicant/Resume" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="person" />
           </q-item-section>
@@ -99,7 +99,7 @@
           <q-item-section>
             <q-item-label>Videos</q-item-label>
           </q-item-section>
-        </q-item>
+        </q-item> -->
 
         <q-item v-if="user?.account_type === 5" to="/employer/profile" active-class="q-item-no-link-highlighting">
        <q-item-section avatar>

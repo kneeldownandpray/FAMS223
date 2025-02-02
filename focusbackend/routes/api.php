@@ -13,6 +13,7 @@ use App\Http\Controllers\ReelsController;
 use App\Http\Controllers\VideoScrollController;
 use App\Http\Controllers\HiredController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\VehicleRecordController;
 
 
 // Middleware-protected route to fetch the authenticated user's details
@@ -30,7 +31,8 @@ Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanct
 Route::put('validUsers/{id}/changePassword', [AccountController::class, 'changePassword']); // Change password for user
 Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword']);
-
+Route::post('/vehicle-records', [VehicleRecordController::class, 'store']);
+Route::get('/vehicle-records', [VehicleRecordController::class, 'index']);
 
 
 
