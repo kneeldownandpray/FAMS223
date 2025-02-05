@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\VehicleRecord;
 use Illuminate\Http\Request;
-
+use Carbon\Carbon; // For handling date operations
 class VehicleRecordController extends Controller
 {
     // Function to store vehicle record (Create)
@@ -37,9 +37,13 @@ class VehicleRecordController extends Controller
     {
         $search = $request->query('search');
         $perPage = $request->query('per_page', 10);
+        $dateFilter = $request->query('date_filter'); // For filtering by date
+        $startDate = $request->query('start_date'); // Start date for range filter
+        $endDate = $request->query('end_date'); // End date for range filter
 
         $query = VehicleRecord::where('user_id', $user_id);
 
+        // Apply search filter if provided
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('pattern', 'LIKE', "%{$search}%")
@@ -48,11 +52,24 @@ class VehicleRecordController extends Controller
             });
         }
 
+        // Apply date filter (Yesterday, Today, Date Range)
+        if ($dateFilter) {
+            if ($dateFilter == 'yesterday') {
+                $query->whereDate('created_at', Carbon::yesterday()->toDateString());
+            } elseif ($dateFilter == 'today') {
+                $query->whereDate('created_at', Carbon::today()->toDateString());
+            }
+        }
+
+        // Apply date range filter
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
         $vehicleRecords = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
         return response()->json($vehicleRecords, 200);
     }
-
     // Function to update a vehicle record (Edit)
     public function update(Request $request, $id)
     {

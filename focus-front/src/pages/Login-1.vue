@@ -70,12 +70,12 @@
         <q-dialog v-model="accountTypeDialog">
           <q-card class="custom-dialog">
             <q-card-section>
-              <div class="text-h6">Select Your Role</div>
+              <div class="text-h6">Are you sure you want to create account?</div>
             </q-card-section>
 
             <q-card-section>
-              <q-btn label="Applicant" color="secondary" class="q-mt-sm q-mr-sm" @click="openRegistration('applicant')" />
-              <q-btn label="Employer" color="primary" class=" q-mt-sm" @click="openRegistration('employer')" />
+              <q-btn label="Yes" color="secondary" class="q-mt-sm q-mr-sm" @click="openRegistration('applicant')" />
+              <q-btn label="no" color="primary" class=" q-mt-sm" @click="this.accountTypeDialog = false" />
             </q-card-section>
           </q-card>
         </q-dialog>
@@ -110,13 +110,14 @@
         <q-dialog v-model="registerApplicantDialog">
           <q-card class="custom-dialog">
             <q-card-section>
-              <div class="text-h6">Applicant Registration</div>
+              <div class="text-h5">Applicant Registration</div>
             </q-card-section>
             <q-card-section>
               <q-form @submit.prevent="register('applicant')">
-                <q-input filled v-model="registrationData.first_name" label="First Name" />
-                <q-input filled v-model="registrationData.middle_name" label="Middle Name" />
-                <q-input filled v-model="registrationData.last_name" label="Last Name" />
+                <q-input filled v-model="registrationData.first_name" label="School Name" />
+                <q-input filled v-model="registrationData.middle_name" label="School Number" />
+                <div class="q-mt-sm q-mb-sm text-h6">Who are you? </div>
+                <q-input filled v-model="registrationData.last_name" label="Your Full Name (Juan, Dela Cruz)" />
                 <q-input filled v-model="registrationData.birthday" label="Birthday" type="date" />
                 <q-select filled v-model="registrationData.gender" :options="['Male', 'Female']" label="Gender" />
                 <q-input filled v-model="registrationData.age" label="Age" type="number" readonly />

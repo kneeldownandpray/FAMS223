@@ -2,11 +2,37 @@
   <q-page class="q-pa-md">
     <h2 class="q-mb-md">Saved Data</h2>
 
+    <!-- Filter Buttons -->
+    <div class="q-mb-md">
+      <q-btn @click="filterByYesterday" label="Yesterday" icon="date_range" color="primary" class="q-mr-md" />
+      <q-btn @click="filterByToday" label="Today" icon="today" color="secondary" />
+    </div>
+
+    <!-- Calendar Filters -->
+    <div class="q-mb-md">
+      <q-date
+        v-model="startDate"
+        mask="YYYY-MM-DD"
+        label="Start Date"
+        :min="minDate"
+        :max="endDate"
+        class="q-mr-md"
+      />
+      <q-date
+        v-model="endDate"
+        mask="YYYY-MM-DD"
+        label="End Date"
+        :min="startDate"
+        class="q-mr-md"
+      />
+      <q-btn @click="filterByDateRange" label="Filter by Date Range" color="primary" icon="filter_list" />
+    </div>
+
+    <!-- Vehicle Records Table -->
     <q-card v-if="savedData.length" class="q-mb-md">
       <q-card-section>
-        <!-- Table for displaying data -->
         <q-table
-          :rows="savedData"
+          :rows="filteredData"
           :columns="columns"
           row-key="id"
           :pagination="pagination"
@@ -83,6 +109,7 @@ export default {
   data() {
     return {
       savedData: [],
+      filteredData: [], // Store filtered data
       pagination: {
         rowsPerPage: 5, // Limit rows per page
       },
@@ -97,13 +124,14 @@ export default {
       imageDialogVisible: false, // To control the image modal visibility
       selectedImage: '', // To store the selected image URL
       userId: '', // User ID from localStorage
+      startDate: '', // Start date for range filter
+      endDate: '', // End date for range filter
     };
   },
   mounted() {
     this.loadData();
   },
   methods: {
-    // Load data from API
     alertMaintenance() {
       alert("This function is under maintenance (purpose of this is to show profile of registered user)");
     },
@@ -121,6 +149,7 @@ export default {
             },
           });
           this.savedData = response.data.data; // Assuming the API returns a paginated response with the vehicle records
+          this.filteredData = this.savedData; // Set initial filtered data
         } catch (error) {
           console.error("Error fetching data:", error);
         }
@@ -134,36 +163,35 @@ export default {
       return date.formatDate(timestamp, 'MMMM D, YYYY (h:mm A)');
     },
 
+    // Filter by "Yesterday"
+    filterByYesterday() {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const formattedDate = yesterday.toISOString().split('T')[0];
+
+      this.filteredData = this.savedData.filter((item) => item.created_at.startsWith(formattedDate));
+    },
+
+    // Filter by "Today"
+    filterByToday() {
+      const today = new Date().toISOString().split('T')[0];
+      this.filteredData = this.savedData.filter((item) => item.created_at.startsWith(today));
+    },
+
+    // Filter by date range
+    filterByDateRange() {
+      if (this.startDate && this.endDate) {
+        this.filteredData = this.savedData.filter((item) => {
+          const itemDate = item.created_at.split('T')[0];
+          return itemDate >= this.startDate && itemDate <= this.endDate;
+        });
+      }
+    },
+
     // Edit functionality
     editData(row) {
-      // Here you can navigate to another page or open a modal for editing
       console.log("Edit item:", row);
-      // You could show a modal or navigate to an edit page, for example:
-      // this.$router.push({ name: 'edit-vehicle', params: { id: row.id } });
     },
-
-    // Update data in localStorage
-    updateData(row) {
-  console.log('Updating row:', row);
-
-  axios.put(`${import.meta.env.VITE_API_BASE_URL}/vehicle-records/${row.id}`, {
-    pattern: row.pattern,
-  }, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('access_token_employer')}`,
-      'Content-Type': 'application/json',
-    },
-  })
-  .then(response => {
-    console.log("Update successful:", response.data);
-
-  })
-  .catch(error => {
-    console.error("Error updating record:", error);
-
-  });
-},
-
 
     // Delete functionality
     deleteData(row) {
@@ -175,8 +203,8 @@ export default {
           },
         })
         .then(() => {
-          // Remove deleted record from the list
           this.savedData = this.savedData.filter(item => item.id !== row.id);
+          this.filteredData = this.filteredData.filter(item => item.id !== row.id);
         })
         .catch(error => {
           console.error("Error deleting record:", error);
