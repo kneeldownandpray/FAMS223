@@ -180,17 +180,16 @@
   const timestamp = new Date().toISOString();
   
   const formData = new FormData();
-  formData.append('pattern', pattern);
+  formData.append('pattern', this.mostCommonPattern);
   formData.append('color', color);
   formData.append('vehicleType', vehicleType);
   formData.append('image', image);  // If 'image' is a file object
   formData.append('timestamp', timestamp);
+  formData.append('user_id', JSON.parse(localStorage.getItem('user')).id);
 
 
  
   try {
-
-    console.log("b46",pattern, color, vehicleType, image);
     const response = await axios.post(apiUrl, formData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('access_token_employer')}`,

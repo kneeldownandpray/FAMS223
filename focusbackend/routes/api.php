@@ -32,8 +32,13 @@ Route::put('validUsers/{id}/changePassword', [AccountController::class, 'changeP
 Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword']);
 Route::post('/vehicle-records', [VehicleRecordController::class, 'store']);
-Route::get('/vehicle-records', [VehicleRecordController::class, 'index']);
+Route::get('/vehicle-records/{user_id}', [VehicleRecordController::class, 'index']); // Fetch records with search & pagination
 
+    // Update a vehicle record
+    Route::put('/vehicle-records/{id}', [VehicleRecordController::class, 'update']);
+
+    // Delete a vehicle record
+    Route::delete('/vehicle-records/{id}', [VehicleRecordController::class, 'destroy']);
 
 
 // Account Management Routes
