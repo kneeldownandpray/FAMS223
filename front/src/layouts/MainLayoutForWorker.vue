@@ -24,23 +24,7 @@
             @click="$q.fullscreen.toggle()"
             v-if="$q.screen.gt.sm"
           />
-          <q-btn round dense flat color="white" icon="notifications">
-            <q-badge color="red" text-color="white" floating>5</q-badge>
-            <q-menu>
-              <q-list style="min-width: 100px">
-                <messages />
-                <q-card class="text-center no-shadow no-border">
-                  <q-btn
-                    label="View All"
-                    style="max-width: 120px !important;"
-                    flat
-                    dense
-                    class="text-indigo-8"
-                  />
-                </q-card>
-              </q-list>
-            </q-menu>
-          </q-btn>
+          
           <q-btn round flat>
             <q-avatar size="26px">
               <img src="https://cdn.quasar.dev/img/boy-avatar.png" />

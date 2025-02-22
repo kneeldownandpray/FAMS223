@@ -24,23 +24,7 @@
             @click="$q.fullscreen.toggle()"
             v-if="$q.screen.gt.sm"
           />
-          <q-btn round dense flat color="white" icon="notifications">
-            <q-badge color="red" text-color="white" floating>5</q-badge>
-            <q-menu>
-              <q-list style="min-width: 100px">
-                <messages />
-                <q-card class="text-center no-shadow no-border">
-                  <q-btn
-                    label="View All"
-                    style="max-width: 120px !important;"
-                    flat
-                    dense
-                    class="text-indigo-8"
-                  />
-                </q-card>
-              </q-list>
-            </q-menu>
-          </q-btn>
+          
           <q-btn round flat>
             <q-avatar size="26px">
               <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
@@ -66,65 +50,34 @@
     >
       <q-list pointers>
 
-        <q-item  to="/global-chat" active-class="q-item-no-link-highlighting">
+   
+
+     <q-item  to="/" active-class="q-item-no-link-highlighting">
+       <q-item-section avatar>
+         <q-icon name="play_circle_filled" />
+       </q-item-section>
+       <q-item-section>
+         <q-item-label>Video Cam</q-item-label>
+       </q-item-section>
+     </q-item>
+
+
+     <q-item  to="/" active-class="q-item-no-link-highlighting">
+       <q-item-section avatar>
+         <q-icon name="table_chart" />
+       </q-item-section>
+       <q-item-section>
+         <q-item-label>Records</q-item-label>
+       </q-item-section>
+     </q-item>
+
+
+     <q-item  to="/global-chat" active-class="q-item-no-link-highlighting">
        <q-item-section avatar>
          <q-icon name="chat" />
        </q-item-section>
        <q-item-section>
          <q-item-label>Global Chat</q-item-label>
-       </q-item-section>
-     </q-item>
-
-        <!-- Display based on user.account_type safely -->
-        <!-- <q-item v-if="user?.account_type === 6" to="/applicant/Resume" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="person" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Resume</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item v-if="user?.account_type === 6" to="/applicant/AddVideo" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="add" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Add Video</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item v-if="user?.account_type === 6" to="/applicant/Videos" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="videocam" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Videos</q-item-label>
-          </q-item-section>
-        </q-item> -->
-
-        <q-item v-if="user?.account_type === 5" to="/employer/profile" active-class="q-item-no-link-highlighting">
-       <q-item-section avatar>
-         <q-icon name="account_circle" />
-       </q-item-section>
-       <q-item-section>
-         <q-item-label>Employer Profile</q-item-label>
-       </q-item-section>
-     </q-item>
-
-     <q-item v-if="user?.account_type === 5" to="/employer/reels" active-class="q-item-no-link-highlighting">
-       <q-item-section avatar>
-         <q-icon name="play_circle_filled" />
-       </q-item-section>
-       <q-item-section>
-         <q-item-label>Video Reels</q-item-label>
-       </q-item-section>
-     </q-item>
-
-     <q-item v-if="user?.account_type === 5" to="/employer/applicants-status" active-class="q-item-no-link-highlighting">
-       <q-item-section avatar>
-         <q-icon name="group" />
-       </q-item-section>
-       <q-item-section>
-         <q-item-label>Applicants</q-item-label>
        </q-item-section>
      </q-item>
 
