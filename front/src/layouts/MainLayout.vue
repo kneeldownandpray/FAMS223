@@ -52,7 +52,26 @@
 
    
 
-     <q-item  to="/" active-class="q-item-no-link-highlighting">
+        <q-item clickable tag="a" href="/global-chat" target="_blank" rel="noopener noreferrer">
+  <q-item-section avatar>
+    <q-icon name="chat" />
+  </q-item-section>
+  <q-item-section>
+    <q-item-label>Global Chat</q-item-label>
+  </q-item-section>
+</q-item>
+
+<q-item clickable tag="a" href="/records" target="_blank" rel="noopener noreferrer">
+  <q-item-section avatar>
+    <q-icon name="table_chart" />
+  </q-item-section>
+  <q-item-section>
+    <q-item-label>Records</q-item-label>
+  </q-item-section>
+</q-item>
+
+
+<q-item  to="/" active-class="q-item-no-link-highlighting">
        <q-item-section avatar>
          <q-icon name="play_circle_filled" />
        </q-item-section>
@@ -61,25 +80,6 @@
        </q-item-section>
      </q-item>
 
-
-     <q-item  to="/" active-class="q-item-no-link-highlighting">
-       <q-item-section avatar>
-         <q-icon name="table_chart" />
-       </q-item-section>
-       <q-item-section>
-         <q-item-label>Records</q-item-label>
-       </q-item-section>
-     </q-item>
-
-
-     <q-item  to="/global-chat" active-class="q-item-no-link-highlighting">
-       <q-item-section avatar>
-         <q-icon name="chat" />
-       </q-item-section>
-       <q-item-section>
-         <q-item-label>Global Chat</q-item-label>
-       </q-item-section>
-     </q-item>
 
       </q-list>
     </q-drawer>

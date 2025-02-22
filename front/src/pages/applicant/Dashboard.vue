@@ -24,14 +24,11 @@
           />
         </q-card-section>
         <q-card-section v-if="detectedPlates.length">
-          <h2>Plates Detected</h2>
-          <ul>
-            <q-item v-for="(plate, index) in detectedPlates" :key="index">
-              <div>
-                {{ plate.text }} - {{ plate.color }}
-              </div>
-            </q-item>
-          </ul>
+          <h2>Reading</h2>
+            <span v-for="(plate, index) in detectedPlates" :key="index">
+             .
+            </span>
+      
         </q-card-section>
       </q-card>
     </div>
@@ -78,6 +75,7 @@ export default {
   mounted() {
     // Load permanent records from local storage on mount
     this.jorellestorage();
+    
   },
   methods: {
     jorellestorage() {
