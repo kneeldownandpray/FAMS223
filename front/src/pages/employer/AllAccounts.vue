@@ -269,11 +269,8 @@ export default defineComponent({
     getAccountTypeName(accountType) {
       const mappings = {
         1: 'Developer',
-        2: 'Admin',
-        3: 'Admin Workers',
-        4: 'Lending',
-        5: 'Employer',
-        6: 'Worker'
+        5: 'School',
+        6: 'School',
       };
       return mappings[accountType] || 'Unknown';
     },

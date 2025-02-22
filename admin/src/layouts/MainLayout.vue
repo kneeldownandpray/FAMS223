@@ -99,7 +99,7 @@
           />
           
         </div>
-        <q-item to="/" active-class="q-item-no-link-highlighting">
+        <!-- <q-item to="/" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="dashboard"/>
           </q-item-section>
@@ -114,7 +114,7 @@
           <q-item-section>
             <q-item-label>CRM Dashboard</q-item-label>
           </q-item-section>
-        </q-item>
+        </q-item> -->
         <!-- <q-expansion-item
           icon="pages"
           label="Pages"
@@ -228,7 +228,7 @@
         <q-item-label>Accounts</q-item-label>
       </q-item-section>
     </q-item> -->
-    <q-item to="/WorkerAccounts" active-class="q-item-no-link-highlighting">
+    <q-item to="/SchoolAccounts" active-class="q-item-no-link-highlighting">
       <q-item-section avatar>
         <q-icon name="person"/>
       </q-item-section>

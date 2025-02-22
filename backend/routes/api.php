@@ -5,12 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CounterController;
-use App\Http\Controllers\ResumeController;
-use App\Http\Controllers\EducationalAttainmentController;
-use App\Http\Controllers\WorkExperienceController;
-use App\Http\Controllers\UserVideoController;
-use App\Http\Controllers\ReelsController;
-use App\Http\Controllers\VideoScrollController;
 use App\Http\Controllers\HiredController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\VehicleRecordController;
@@ -67,22 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('users', [AccountController::class, 'index']);    // Fetch user list
     Route::put('validUsers/{id}', [AccountController::class, 'update']);  // Update user by ID
     Route::delete('validUsers/{id}', [AccountController::class, 'destroy']);  // Delete user by ID
-    Route::apiResource('resumes', ResumeController::class);
-    Route::get('resume', [ResumeController::class, 'showOwnResume']); // display specific resume
-    Route::post('/resumes/user/{userId}', [ResumeController::class, 'getByUserId']);
-    Route::post('/resumes/video/{userId}', [ResumeController::class, 'getByUserVideo']);
-    Route::apiResource('educational-attainments', EducationalAttainmentController::class);
-    Route::apiResource('work-experiences', WorkExperienceController::class);
-    Route::post('/user-videos', [UserVideoController::class, 'store']);    // Create new video
-    Route::get('/user-videos', [UserVideoController::class, 'index']);     // Fetch all videos
-    Route::get('/user-videos/{id}', [UserVideoController::class, 'show']); // Fetch a single video
-    Route::put('/user-videos/{id}', [UserVideoController::class, 'update']); // Update a video
-    Route::delete('/user-videos/{id}', [UserVideoController::class, 'destroy']); // Delete a video
 
-    //employer 
-    Route::get('/reels', [ReelsController::class, 'getReels']);
-    Route::get('/next-video', [VideoScrollController::class, 'getNextVideo']);
-    Route::post('/previous-video', [VideoScrollController::class, 'getPreviousVideo']);
     Route::post('/hire', [HiredController::class, 'hire']);
     Route::post('/hire-checker/{applicantId}', [HiredController::class, 'isUserHired']);
     

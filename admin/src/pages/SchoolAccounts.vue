@@ -429,7 +429,7 @@ export default defineComponent({
   
     getAccountTypeName(accountType) {
       const mappings = {
-        6: 'Worker'
+        6: 'School',
       };
       return mappings[accountType] || 'Unknown';
     },
