@@ -2,14 +2,17 @@
   <q-page class="q-pa-md">
     <h2 class="q-mb-md">Saved Data</h2>
 
+
     <!-- Filter Buttons -->
     <div class="q-mb-md">
       <q-btn @click="filterByYesterday" label="Yesterday" icon="date_range" color="primary" class="q-mr-md" />
-      <q-btn @click="filterByToday" label="Today" icon="today" color="secondary" />
+      <q-btn @click="filterByToday" label="Today" icon="today" class="q-mr-md" color="secondary" />
+      <q-btn @click="isfillteredbycalendar = !isfillteredbycalendar" label="Filter by Calendar" icon="today" color="red" />
     </div>
 
     <!-- Calendar Filters -->
-    <div class="q-mb-md">
+    <div class="q-mb-md" v-if="isfillteredbycalendar">
+  
       <q-date
         v-model="startDate"
         mask="YYYY-MM-DD"
@@ -108,6 +111,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
+      isfillteredbycalendar:false,
       savedData: [],
       filteredData: [], // Store filtered data
       pagination: {
