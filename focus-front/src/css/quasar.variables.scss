@@ -1,0 +1,23 @@
+
+$primary   : #1c4da1;
+$secondary : #26A69A;
+$accent    : #dd4b39;
+
+$dark      : #1D1D1D;
+
+$positive  : #21BA45;
+$negative  : #C10015;
+$info      : #31CCEC;
+$warning   : #F2C037;
+$warning3   : #F2C037;
+.custom-dialog {
+    max-width: 600px;
+    width: 100%;
+    // background-color: $primary;
+    color: $primary;
+    // padding: 16px;
+  }
+  .header-format-w{
+    background-color: $primary;
+    color: #fff;
+  }
