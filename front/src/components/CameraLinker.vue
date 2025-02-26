@@ -29,9 +29,17 @@
                   style="border: 1px solid #ddd; width: 100%; max-width: 640px; opacity: 0; height: 1px !important; width: 1px !important;"
                 ></video>
                 <canvas :ref="setCanvasRef(index)" style="border: 1px solid #ddd; width: 100%;"></canvas>
+                <q-btn
+                  @click="setButtonState(index)"
+                  :color="buttonStates[index] ? 'green' : 'red'"
+                  :icon="buttonStates[index] ? 'check_circle_outline' : 'stop'"
+                  :label="buttonStates[index] ? 'In' : 'Out'"
+                  style="padding: 8px; min-width: 80px;"
+                />
               </q-card-section>
             </q-card>
           </q-col>
+        
         </div>
       </q-gutter-sm>
     </div>
@@ -88,6 +96,7 @@ export default {
     const canvasRefs = ref([]); // Canvas elements for processing
     const error = ref(""); // Error messages
     const detections = ref([]); // Detected plates
+    const buttontoggle33 = ref(false); // Image modal visibility
     const imageDialog = ref(false); // Image modal visibility
     const selectedImage = ref(""); // Currently selected full-size image
     const extractedText = ref(""); // Extracted text from image
@@ -96,6 +105,25 @@ export default {
     const setVideoRef = (index) => (el) => (videoRefs.value[index] = el);
     const setCanvasRef = (index) => (el) => (canvasRefs.value[index] = el);
 
+
+    const buttonStates = ref(new Array(cameras.length).fill(false)); // Initialize with all false
+
+const toggleCameraState = (index) => {
+  buttonStates.value[index] = !buttonStates.value[index];
+  console.log(`Camera ${index} state changed to: ${buttonStates.value[index]}`);
+
+  console.log(buttonStates.value);
+};
+
+const setButtonState = (index) => {
+  toggleCameraState(index);
+};
+
+    const setCanvasRef2 = (index) => (el) => {
+      console.log("helloworld");
+      buttonStates.value[index] = !buttonStates.value[index];
+      setButtonState(index, buttonStates.value[index]);
+    };
     const detectCameras = async () => {
       cameras.value = [];
       if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
@@ -172,7 +200,6 @@ export default {
         tempCanvas.height = height;
         tempCtx.putImageData(croppedPlate, 0, 0);
         const plateImageBase64 = tempCanvas.toDataURL("image/png");
-
         const color = getColor(ctx, x, y, width, height);
         const plateText = await recognizePlate(croppedPlate);
 
@@ -184,10 +211,13 @@ export default {
         if (plateText) {
           if (resetTriggernessCameraArray === false || resetTriggernessCameraArray === null) {
             detections.value.push({
+              cameraType:buttonStates.value[index],
+            
               text: plateText,
               color: color,
               image: plateImageBase64, // Include the Base64 image
               vehicleType: prediction.class, // Include the vehicle type
+              
             });
           } else if (resetTriggernessCameraArray === true) {
             detections.value = [];
@@ -273,21 +303,23 @@ const getColor = (ctx, x, y, width, height) => {
     onMounted(detectCameras);
 
     return {
-        cameras,
-        streams,
-        videoRefs,
-        canvasRefs,
-        error,
-        detections,
-        imageDialog,
-        selectedImage,
-        extractedText,
-        detectCameras,
-        startCameras,
-        setVideoRef,
-        setCanvasRef,
-        showImage,
-        convertImageToText,
+      cameras,
+      streams,
+      videoRefs,
+      canvasRefs,
+      error,
+      detections,
+      imageDialog,
+      selectedImage,
+      extractedText,
+      buttonStates, // Add this to the returned object
+      detectCameras,
+      startCameras,
+      setVideoRef,
+      setCanvasRef,
+      showImage,
+      convertImageToText,
+      setButtonState,
       };
     },
   };
