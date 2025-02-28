@@ -15,22 +15,25 @@ class VehicleRecordController extends Controller
             'color' => 'required|string',
             'vehicleType' => 'required|string',
             'image' => 'nullable|string',
-            'user_id' => 'required|integer'
+            'user_id' => 'required|integer',
+            // 'vehicle_status' => 'boolean' // Ensure it's a boolean value
         ]);
-
-        $vehicleRecord = new VehicleRecord();
-        $vehicleRecord->user_id = $request->user_id;
-        $vehicleRecord->pattern = $request->pattern;
-        $vehicleRecord->color = $request->color;
-        $vehicleRecord->vehicle_type = $request->vehicleType;
-        $vehicleRecord->image = $request->image;
-        $vehicleRecord->save();
-
+    
+        $vehicleRecord = VehicleRecord::create([
+            'user_id' => $request->user_id,
+            'pattern' => $request->pattern,
+            'color' => $request->color,
+            'vehicle_type' => $request->vehicleType,
+            'image' => $request->image,
+            'vehicle_status' => $request->vehicle_status ?? true, // Default to true if not provided
+        ]);
+    
         return response()->json([
             'message' => 'Vehicle record created successfully!',
             'vehicle_record' => $vehicleRecord
         ], 201);
     }
+    
 
     // Function to get vehicle records with pagination & search (Read)
     public function index(Request $request, $user_id)

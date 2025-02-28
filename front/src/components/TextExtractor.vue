@@ -175,18 +175,18 @@
         this.selectedImage = clearImage ? clearImage.image : null;
       },
       async saveToDatabase(pattern, color, vehicleType, image) {
-  console.log("Saving data to API");
-  const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/vehicle-records`;
-  const timestamp = new Date().toISOString();
-  
-  const formData = new FormData();
-  formData.append('pattern', this.mostCommonPattern);
-  formData.append('color', color);
-  formData.append('vehicleType', vehicleType);
-  formData.append('image', image);  // If 'image' is a file object
-  formData.append('timestamp', timestamp);
-  formData.append('user_id', JSON.parse(localStorage.getItem('user')).id);
-
+        console.log("Saving data to API");
+        const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/vehicle-records`;
+        const timestamp = new Date().toISOString();
+        
+        const formData = new FormData();
+        formData.append('pattern', this.mostCommonPattern);
+        formData.append('color', color);
+        formData.append('vehicleType', vehicleType);
+        formData.append('image', image);  // If 'image' is a file object
+        formData.append('timestamp', timestamp);
+        formData.append('user_id', JSON.parse(localStorage.getItem('user')).id);
+        formData.append('vehicle_status', 0);
 
  
   try {

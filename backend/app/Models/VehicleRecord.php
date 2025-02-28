@@ -15,11 +15,10 @@ class VehicleRecord extends Model
         'color',
         'vehicle_type',
         'image', // Allow image to be mass-assigned
+        'vehicle_status' // Add vehicle_status to mass assignable fields
     ];
 
-    // Disable timestamps if you don't want Laravel to manage 'created_at' and 'updated_at'
     public $timestamps = true;
 
-    // Optionally, define the path for the table
     protected $table = 'vehicle_records';
 }
