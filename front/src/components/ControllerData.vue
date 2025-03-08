@@ -1,8 +1,8 @@
 <template>
   <q-page class="q-pa-md">
     <h2 class="q-mb-md">Saved Data</h2>
-
-
+<br>{{ this.outCounter }}
+<br>{{ this.inCounter }}<br><br>
     <!-- Filter Buttons -->
     <div class="q-mb-md">
       <q-btn @click="filterByYesterday" label="Yesterday" icon="date_range" color="primary" class="q-mr-md" />
@@ -125,6 +125,8 @@ export default {
         { name: 'image', label: 'Image', align: 'left', field: 'image' },
         { name: 'actions', label: 'Actions', align: 'center', field: 'actions' },
       ],
+      inCounter:null,
+      outCounter:null,
       imageDialogVisible: false, // To control the image modal visibility
       selectedImage: '', // To store the selected image URL
       userId: '', // User ID from localStorage
@@ -133,7 +135,7 @@ export default {
     };
   },
   mounted() {
-    this.loadData();
+    this.filterByToday();
   },
   methods: {
     alertMaintenance() {
@@ -142,55 +144,77 @@ export default {
 
     // Fetch data from the API
     async loadData() {
-      this.userId = JSON.parse(localStorage.getItem('user')).id; // Get user ID from localStorage
+  this.userId = JSON.parse(localStorage.getItem('user')).id;
 
-      if (this.userId) {
-        try {
-          const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/vehicle-records/${this.userId}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('access_token_employer')}`,
-              'Content-Type': 'multipart/form-data',  // This is required for file uploads
-            },
-          });
-          this.savedData = response.data.data; // Assuming the API returns a paginated response with the vehicle records
-          this.filteredData = this.savedData; // Set initial filtered data
-        } catch (error) {
-          console.error("Error fetching data:", error);
+  if (this.userId) {
+    try {
+      const params = {
+        start_date: this.startDate || null,
+        end_date: this.endDate || null,
+      };
+
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/vehicle-records/${this.userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token_employer')}`,
+            'Content-Type': 'application/json',
+          },
+          params: params,
         }
-      } else {
-        console.log('User ID not found in localStorage');
-      }
-    },
+      );
 
-    // Format timestamp into a more readable format
-    formatDate(timestamp) {
-      return date.formatDate(timestamp, 'MMMM D, YYYY (h:mm A)');
-    },
+      this.savedData = response.data.vehicleRecords.data;
+      this.inCounter = response.data.dateCounts.inCount;
+      this.outCounter = response.data.dateCounts.outCount;
+      this.filteredData = this.savedData;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  } else {
+    console.log("User ID not found in localStorage");
+  }
+},
 
-    // Filter by "Yesterday"
-    filterByYesterday() {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const formattedDate = yesterday.toISOString().split('T')[0];
+// Function to format timestamp into readable format
+formatDate(timestamp) {
+  return date.formatDate(timestamp, 'MMMM D, YYYY (h:mm A)');
+},
 
-      this.filteredData = this.savedData.filter((item) => item.created_at.startsWith(formattedDate));
-    },
+// 📅 Pag-filter ng "Today" (Hal. March 7 - March 8)
+filterByToday() {
+  const start = new Date();
+  start.setDate(start.getDate()); // Ngayon
 
-    // Filter by "Today"
-    filterByToday() {
-      const today = new Date().toISOString().split('T')[0];
-      this.filteredData = this.savedData.filter((item) => item.created_at.startsWith(today));
-    },
+  const end = new Date();
+  end.setDate(end.getDate() + 1); // Bukas
 
-    // Filter by date range
-    filterByDateRange() {
-      if (this.startDate && this.endDate) {
-        this.filteredData = this.savedData.filter((item) => {
-          const itemDate = item.created_at.split('T')[0];
-          return itemDate >= this.startDate && itemDate <= this.endDate;
-        });
-      }
-    },
+  this.startDate = start.toISOString().split("T")[0]; // YYYY-MM-DD
+  this.endDate = end.toISOString().split("T")[0]; // YYYY-MM-DD
+
+  this.loadData();
+},
+
+// 📅 Pag-filter ng "Yesterday" (Hal. March 6 - March 7)
+filterByYesterday() {
+  const start = new Date();
+  start.setDate(start.getDate() - 1); // Kahapon
+
+  const end = new Date();
+  end.setDate(end.getDate()); // Ngayon
+
+  this.startDate = start.toISOString().split("T")[0]; // YYYY-MM-DD
+  this.endDate = end.toISOString().split("T")[0]; // YYYY-MM-DD
+
+  this.loadData();
+},
+
+// 📅 Pag-filter ng Custom Date Range
+filterByDateRange() {
+  if (this.startDate && this.endDate) {
+    this.loadData();
+  }
+},
 
     // Edit functionality
     editData(row) {
