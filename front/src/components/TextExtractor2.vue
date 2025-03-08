@@ -69,34 +69,18 @@
         this.analyzeColors();
         this.findMostFrequentVehicleType();
         this.selectClearImage();
-        const cameraTypeValue = this.determineCameraType();
   
-   // Save data to API
-   if (this.mostCommonPattern && this.mostFrequentColor && this.mostFrequentVehicleType && this.selectedImage) {
-      this.saveToDatabase(
-        this.mostCommonPattern,
-        this.mostFrequentColor,
-        this.mostFrequentVehicleType,
-        this.selectedImage,
-        cameraTypeValue
-      );
+        // Save data to localStorage
+        if (this.mostCommonPattern && this.mostFrequentColor && this.mostFrequentVehicleType && this.selectedImage) {
+          this.saveToDatabase(
+            this.mostCommonPattern,
+            this.mostFrequentColor,
+            this.mostFrequentVehicleType,
+            this.selectedImage
+          );
         }
       },
-      determineCameraType() {
-    let trueCount = 0;
-    let falseCount = 0;
-
-    this.plates.forEach((item) => {
-      if (item.cameraType === true) {
-        trueCount++;
-      } else {
-        falseCount++;
-      }
-    });
-
-    return trueCount > falseCount ? 1 : 0; // Save as 1 if true is more, otherwise 0
-  },
-
+  
       extractPattern(concatenatedText) {
         let foundText = "";
         let tempWord = "";
@@ -190,7 +174,7 @@
   
         this.selectedImage = clearImage ? clearImage.image : null;
       },
-      async saveToDatabase(pattern, color, vehicleType, image, cameraTypeValue) {
+      async saveToDatabase(pattern, color, vehicleType, image) {
         console.log("Saving data to API");
         const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/vehicle-records`;
         const timestamp = new Date().toISOString();
@@ -202,7 +186,7 @@
         formData.append('image', image);  // If 'image' is a file object
         formData.append('timestamp', timestamp);
         formData.append('user_id', JSON.parse(localStorage.getItem('user')).id);
-        formData.append('vehicle_status', cameraTypeValue);
+        formData.append('vehicle_status', 0);
 
  
   try {

@@ -211,8 +211,7 @@ const setButtonState = (index) => {
         if (plateText) {
           if (resetTriggernessCameraArray === false || resetTriggernessCameraArray === null) {
             detections.value.push({
-              cameraType:buttonStates.value[index],
-            
+              cameraType: buttonStates.value[index] !== undefined ? buttonStates.value[index] : false,
               text: plateText,
               color: color,
               image: plateImageBase64, // Include the Base64 image
