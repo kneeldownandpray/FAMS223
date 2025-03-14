@@ -303,6 +303,36 @@ export default {
       }
     },
 
+    async addCertificates() {
+      try {
+        const token = localStorage.getItem('access_token_applicant');
+        const response = await axios.post(`${apiBaseUrl}/work-experiences`, {
+          resume_id: this.resume.id,
+          ...this.work
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        this.resume.work_experiences.push(response.data);
+        this.showWorkDialog = false;
+      } catch (error) {
+        // console.error('Error adding work experience:', error);
+      }
+    },
+    async addWorkSkills() {
+      try {
+        const token = localStorage.getItem('access_token_applicant');
+        const response = await axios.post(`${apiBaseUrl}/work-experiences`, {
+          resume_id: this.resume.id,
+          ...this.work
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        this.resume.work_experiences.push(response.data);
+        this.showWorkDialog = false;
+      } catch (error) {
+        // console.error('Error adding work experience:', error);
+      }
+    },
     async addEducationalAttainment() {
       try {
         const token = localStorage.getItem('access_token_applicant');

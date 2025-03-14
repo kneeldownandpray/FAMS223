@@ -2,10 +2,10 @@
   <q-layout>
     <q-page-container>
       <q-page class="flex bg-image flex-center" >
-        <q-card v-if="!this.forgotPass" :style="$q.screen.lt.sm ? { width: '80%' } : { width: '30%' }">
+        <q-card class="ntr-shdw" v-if="!this.forgotPass" :style="$q.screen.lt.sm ? { width: '80%' } : { width: '30%' }">
           <!-- Logo -->
           <q-card-section>
-            <div class="text-center q-pt-lg">
+            <div class="text-center q-pt-lg ">
               <img src="logo.png" width="200" />
             </div>
           </q-card-section>
@@ -336,6 +336,6 @@ export default {
 <style scoped>
 
 .bg-image {
-  background-color: #242340;
+  background-color:  #fff;
 }
 </style>
