@@ -136,4 +136,100 @@ class VehicleRecordController extends Controller
 
         return response()->json(['message' => 'Vehicle record deleted successfully'], 200);
     }
+
+
+
+    public function dailyReport(Request $request)
+    {
+        $days = $request->query('days', 7); // Default: Last 7 days
+        $startDate = Carbon::today()->subDays($days - 1);
+        $endDate = Carbon::today();
+    
+        // Kunin lahat ng records sa date range
+        $records = VehicleRecord::whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at', 'asc') // Para tama ang pairing
+            ->get();
+    
+        $groupedRecords = [];
+        
+        // Group records by date and plate_number
+        foreach ($records as $record) {
+            $date = Carbon::parse($record->created_at)->format('Y-m-d');
+            $plate = $record->plate_number;
+    
+            $groupedRecords[$date][$plate][] = $record;
+        }
+    
+        $finalReport = [];
+    
+        foreach ($groupedRecords as $date => $plates) {
+            $inCount = 0;
+            $outCount = 0;
+            $visitorCount = 0;
+            $parkCount = 0;
+            $unknownCount = 0;
+    
+            foreach ($plates as $plate => $entries) {
+                $inTimes = [];
+                $outTimes = [];
+    
+                // Hiwalayin ang "in" at "out"
+                foreach ($entries as $entry) {
+                    if ($entry->vehicle_status == 1) {
+                        $inTimes[] = Carbon::parse($entry->created_at);
+                        $inCount++;
+                    } else {
+                        $outTimes[] = Carbon::parse($entry->created_at);
+                        $outCount++;
+                    }
+                }
+    
+                // Process pairing
+                while (!empty($inTimes) && !empty($outTimes)) {
+                    $inTime = array_shift($inTimes);
+                    $outTime = null;
+    
+                    // Hanapin ang pinaka-malapit na "out"
+                    foreach ($outTimes as $key => $oTime) {
+                        if ($oTime->greaterThan($inTime)) {
+                            $outTime = $oTime;
+                            unset($outTimes[$key]);
+                            break;
+                        }
+                    }
+    
+                    if ($outTime) {
+                        $duration = $inTime->diffInMinutes($outTime);
+    
+                        if ($duration >= 30) {
+                            $parkCount++;
+                        } else {
+                            $visitorCount++;
+                        }
+                    } else {
+                        $unknownCount++;
+                    }
+                }
+    
+                // Kapag may natitirang in o out na walang kapartner
+                $unknownCount += count($inTimes) + count($outTimes);
+            }
+    
+            $finalReport[] = [
+                'date' => $date,
+                'inCount' => $inCount,
+                'outCount' => $outCount,
+                'visitor' => $visitorCount,
+                'park' => $parkCount,
+                'unknown' => $unknownCount
+            ];
+        }
+    
+        return response()->json([
+            'message' => 'Daily vehicle report generated successfully!',
+            'report' => $finalReport
+        ], 200);
+    }
+    
+
 }

@@ -1,8 +1,9 @@
 <template>
   <q-page class="q-pa-md">
     <h2 class="q-mb-md">Saved Data</h2>
-<br>{{ this.outCounter }}
-<br>{{ this.inCounter }}<br><br>
+<br> In:{{ this.outCounter }}
+<br>Out:{{ this.inCounter }}<br><br>
+<br>
     <!-- Filter Buttons -->
     <div class="q-mb-md">
       <q-btn @click="filterByYesterday" label="Yesterday" icon="date_range" color="primary" class="q-mr-md" />
@@ -134,8 +135,24 @@ export default {
       endDate: '', // End date for range filter
     };
   },
+  props: {
+    date2: String, // Receive selected date from DailyReport.vue
+  },
   mounted() {
     this.filterByToday();
+    if (this.date2) {
+    // Kung may laman ang date2, gamitin ito bilang startDate
+    this.startDate = this.date2;
+    
+    // Compute endDate (next day)
+    const startDateObj = new Date(this.date2);
+    startDateObj.setDate(startDateObj.getDate() + 1);
+    this.endDate = startDateObj.toISOString().split("T")[0];
+
+    this.loadData(); // Tawagin ang loadData para mag-fetch gamit ang bagong dates
+  } else {
+    this.filterByToday(); // Default behavior kung walang date2
+  }
   },
   methods: {
     alertMaintenance() {
