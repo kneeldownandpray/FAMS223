@@ -143,7 +143,7 @@ class VehicleRecordController extends Controller
     {
         $days = $request->query('days', 7); // Default: Last 7 days
         $startDate = Carbon::today()->subDays($days - 1);
-        $endDate = Carbon::today();
+        $endDate = Carbon::now()->endOfDay();
     
         // Kunin lahat ng records sa date range
         $records = VehicleRecord::whereBetween('created_at', [$startDate, $endDate])
