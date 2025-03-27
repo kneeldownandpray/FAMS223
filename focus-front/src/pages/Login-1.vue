@@ -338,7 +338,7 @@ export default {
 .bg-image {
   /* background-color:  #fff1f0; */
   background-color: rgba(255, 255, 255, 0.5); /* White background with 50% opacity */
-  background-image: url('../assets/hinata.jpg');
+  background-image: url('../assets/cover.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
