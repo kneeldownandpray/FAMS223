@@ -9,30 +9,33 @@ use Carbon\Carbon; // Para sa date handling
 class VehicleRecordController extends Controller
 {
     // Function to store vehicle record (Create)
-    public function store(Request $request)
-    {
-        $request->validate([
-            'pattern' => 'required|string',
-            'color' => 'required|string',
-            'vehicleType' => 'required|string',
-            'image' => 'nullable|string',
-            'user_id' => 'required|integer',
-        ]);
+// Controller method (for example, VehicleRecordController.php)
+public function store(Request $request)
+{
+    $request->validate([
+        'pattern' => 'required|string',
+        'color' => 'required|string',
+        'vehicleType' => 'required|string',
+        'image' => 'nullable|string',
+        'user_id' => 'required|integer',
+        'camera_detail' => 'nullable|string', // Add this line for camera_detail
+    ]);
 
-        $vehicleRecord = VehicleRecord::create([
-            'user_id' => $request->user_id,
-            'pattern' => $request->pattern,
-            'color' => $request->color,
-            'vehicle_type' => $request->vehicleType,
-            'image' => $request->image,
-            'vehicle_status' => $request->vehicle_status ?? true, // Default sa `true`
-        ]);
+    $vehicleRecord = VehicleRecord::create([
+        'user_id' => $request->user_id,
+        'pattern' => $request->pattern,
+        'color' => $request->color,
+        'vehicle_type' => $request->vehicleType,
+        'image' => $request->image,
+        'vehicle_status' => $request->vehicle_status ?? true, // Default to `true`
+        'camera_detail' => $request->camera_detail, // Save the camera detail
+    ]);
 
-        return response()->json([
-            'message' => 'Vehicle record created successfully!',
-            'vehicle_record' => $vehicleRecord
-        ], 201);
-    }
+    return response()->json([
+        'message' => 'Vehicle record created successfully!',
+        'vehicle_record' => $vehicleRecord
+    ], 201);
+}
 
     // Function to get vehicle records with pagination & search (Read)
     // Function to get vehicle records with pagination & search (Read)

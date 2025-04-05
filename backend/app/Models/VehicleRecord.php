@@ -15,7 +15,8 @@ class VehicleRecord extends Model
         'color',
         'vehicle_type',
         'image', // Allow image to be mass-assigned
-        'vehicle_status' // Add vehicle_status to mass assignable fields
+        'vehicle_status', // Add vehicle_status to mass assignable fields
+        'camera_detail',
     ];
 
     public $timestamps = true;
