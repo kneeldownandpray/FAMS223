@@ -63,6 +63,9 @@
               <q-td :props="props" key="vehicleType">
                 {{ props.row.vehicle_type }}
               </q-td>
+              <q-td :props="props" key="camera_detail">
+                {{ props.row.camera_detail }}
+              </q-td>
               <q-td :props="props" key="timestamp">
                 {{ formatDate(props.row.created_at) }}
               </q-td>
@@ -120,6 +123,7 @@ export default {
         { name: 'pattern', label: 'Plate Pattern', align: 'left', field: 'pattern' },
         { name: 'color', label: 'Color', align: 'left', field: 'color' },
         { name: 'vehicleType', label: 'Vehicle Type', align: 'left', field: 'vehicle_type' },
+        { name: 'camera_detail', label: 'Detail', align: 'left', field: 'vehicle_type' },
         { name: 'timestamp', label: 'Timestamp', align: 'left', field: 'created_at' },
         { name: 'image', label: 'Image', align: 'left', field: 'image' },
         { name: 'actions', label: 'Actions', align: 'center', field: 'actions' },

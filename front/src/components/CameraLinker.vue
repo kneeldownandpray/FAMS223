@@ -29,6 +29,18 @@
                   style="border: 1px solid #ddd; width: 100%; max-width: 640px; opacity: 0; height: 1px !important; width: 1px !important;"
                 ></video>
                 <canvas :ref="setCanvasRef(index)" style="border: 1px solid #ddd; width: 100%;"></canvas>
+                <div style="margin-top: 10px;">
+                  <q-input
+                  v-model="cameraDetails[index]" 
+                    label="Camera Detail"
+                    placeholder="e.g., Indoor Cam"
+                    dense
+                    autofocus
+                  />
+
+                  <!-- v-model="cameraDetails[index]" -->
+                </div>
+
                 <q-btn
                   @click="setButtonState(index)"
                   :color="buttonStates[index] ? 'green' : 'red'"
@@ -107,7 +119,7 @@ export default {
 
 
     const buttonStates = ref(new Array(cameras.length).fill(false)); // Initialize with all false
-
+    const cameraDetails = ref(new Array(cameras.value.length).fill(""));
 const toggleCameraState = (index) => {
   buttonStates.value[index] = !buttonStates.value[index];
   console.log(`Camera ${index} state changed to: ${buttonStates.value[index]}`);
@@ -216,7 +228,7 @@ const setButtonState = (index) => {
               color: color,
               image: plateImageBase64, // Include the Base64 image
               vehicleType: prediction.class, // Include the vehicle type
-              
+              cameraDetail: cameraDetails.value[index],  // Add camera detail
             });
           } else if (resetTriggernessCameraArray === true) {
             detections.value = [];
@@ -312,6 +324,7 @@ const getColor = (ctx, x, y, width, height) => {
       selectedImage,
       extractedText,
       buttonStates, // Add this to the returned object
+      cameraDetails, 
       detectCameras,
       startCameras,
       setVideoRef,
