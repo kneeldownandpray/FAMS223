@@ -29,7 +29,7 @@
           <!-- Custom Row Styling -->
           <template v-slot:body="props">
             <q-tr :props="props" :style="props.rowIndex === 0 ? 'background-color: lightblue;' : ''">
-              <q-td v-for="col in columns" :key="col.name">
+              <q-td v-for="col in columns" :key="col.name" >
                 {{ props.row[col.field] }}
               </q-td>
               <q-td>
@@ -85,7 +85,7 @@ export default {
     },
     columns() {
       return [
-        { name: "date", label: "Date", align: "left", field: "date" },
+        { name: "date", label: "Date", align: "center", field: "date" },
         { name: "inCount", label: "IN", align: "center", field: "inCount" },
         { name: "outCount", label: "OUT", align: "center", field: "outCount" },
         { name: "visitor", label: "Visitor", align: "center", field: "visitor" },
@@ -97,20 +97,33 @@ export default {
   },
   methods: {
     async fetchDailyReport() {
-      this.loading = true;
-      try {
-        const token = localStorage.getItem("access_token_employer"); // Get token
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/vehicle-records/report/daily?days=${this.selectedDays}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        this.reportData = response.data.report;
-      } catch (error) {
-        console.error("Error fetching report:", error);
-      } finally {
-        this.loading = false;
-      }
-    },
+  this.loading = true;
+  try {
+    const token = localStorage.getItem("access_token_employer");
+    const userData = localStorage.getItem("user");
+
+    if (!userData) {
+      console.error("User data is missing from localStorage.");
+      return;
+    }
+
+    const user = JSON.parse(userData);
+    const userId = user.id;
+
+    // ✅ TAMA: Route parameter ang ginagamit
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_BASE_URL}/vehicle-records/report/daily/${userId}?days=${this.selectedDays}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    this.reportData = response.data.report;
+  } catch (error) {
+    console.error("Error fetching report:", error);
+  } finally {
+    this.loading = false;
+  }
+},
+
     openControllerData(date) {
       this.selectedDate = date; // Set selected date
       this.showControllerDataDialog = true; // Open dialog

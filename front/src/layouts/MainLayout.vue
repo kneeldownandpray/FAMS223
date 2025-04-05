@@ -52,14 +52,7 @@
 
    
 
-        <q-item clickable tag="a" href="/global-chat" target="_blank" rel="noopener noreferrer">
-  <q-item-section avatar>
-    <q-icon name="chat" />
-  </q-item-section>
-  <q-item-section>
-    <q-item-label>Global Chat</q-item-label>
-  </q-item-section>
-</q-item>
+
 
 <q-item clickable tag="a" href="/records" target="_blank" rel="noopener noreferrer">
   <q-item-section avatar>

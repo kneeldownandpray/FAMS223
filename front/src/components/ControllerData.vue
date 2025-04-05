@@ -1,38 +1,32 @@
 <template>
   <q-page class="q-pa-md">
-    <h2 class="q-mb-md">Saved Data</h2>
-<br> In:{{ this.outCounter }}
-<br>Out:{{ this.inCounter }}<br><br>
-<br>
+    <div class="q-pa-md flex flex-center column">
+    <h2 class="q-mb-md text-center">Recorded Data</h2>
+
+    <div class="counter-container">
+      <div class="counter in-counter ">In: {{ this.inCounter }}</div>
+      <div class="counter out-counter">Out: {{ this.outCounter }}</div>
+    </div>
+
     <!-- Filter Buttons -->
-    <div class="q-mb-md">
+    <div class="q-mb-md q-mt-md">
+      <q-btn @click="exportToExcel()" label="Export to Excel" class="q-mr-md" color="secondary" />
       <q-btn @click="filterByYesterday" label="Yesterday" icon="date_range" color="primary" class="q-mr-md" />
       <q-btn @click="filterByToday" label="Today" icon="today" class="q-mr-md" color="secondary" />
-      <q-btn @click="isfillteredbycalendar = !isfillteredbycalendar" label="Filter by Calendar" icon="today" color="red" />
+      <q-btn @click="isfillteredbycalendar = !isfillteredbycalendar" label="Filter by Calendar" icon="event" color="red" />
     </div>
 
     <!-- Calendar Filters -->
     <div class="q-mb-md" v-if="isfillteredbycalendar">
-  
-      <q-date
-        v-model="startDate"
-        mask="YYYY-MM-DD"
-        label="Start Date"
-        :min="minDate"
-        :max="endDate"
-        class="q-mr-md"
-      />
-      <q-date
-        v-model="endDate"
-        mask="YYYY-MM-DD"
-        label="End Date"
-        :min="startDate"
-        class="q-mr-md"
-      />
+      <q-date v-model="startDate" mask="YYYY-MM-DD" label="Start Date" :min="minDate" :max="endDate" class="q-mr-md" />
+      <q-date v-model="endDate" mask="YYYY-MM-DD" label="End Date" :min="startDate" class="q-mr-md" />
       <q-btn @click="filterByDateRange" label="Filter by Date Range" color="primary" icon="filter_list" />
     </div>
-
+  </div>
     <!-- Vehicle Records Table -->
+    
+    <!-- props.row.vehicle_status gusto ko kapag 1 yan yon ay color light greed. pag zero light red -->
+
     <q-card v-if="savedData.length" class="q-mb-md">
       <q-card-section>
         <q-table
@@ -43,7 +37,9 @@
           flat
         >
           <template v-slot:body="props">
-            <q-tr :props="props">
+            <q-tr :props="props"
+             :style="{ backgroundColor: props.row.vehicle_status === 1 ? '#d4edda'  : '#f8d7da' }"
+            >
               <q-td :props="props" key="pattern">
                 <q-input
                   v-model="props.row.pattern"
@@ -56,7 +52,10 @@
               </q-td>
               <q-td :props="props" key="color">
                 <div class="q-mb-xs">
-                  <span :style="{ color: props.row.color }">{{ props.row.color }}</span>
+                  <span :style="{ color: props.row.color }">{{ props.row.color }}
+                   
+
+                  </span>
                 </div>
                 <div :style="{ backgroundColor: props.row.color }" style="height: 20px; width: 20px; border-radius: 50%;"></div>
               </q-td>
@@ -70,7 +69,7 @@
               <q-td :props="props" key="image">
                 <q-img
                   :src="props.row.image"
-                  :alt="`Plate Image: ${props.row.pattern}`"
+        
                   width="50px"
                   @click="showImage(props.row.image)"
                   class="thumbnail-image"
@@ -104,7 +103,6 @@
     </q-dialog>
   </q-page>
 </template>
-
 <script>
 import { date } from 'quasar';
 import axios from 'axios';
@@ -274,5 +272,35 @@ filterByDateRange() {
   object-fit: cover;
   margin-top: 5px;
   border-radius: 4px;
+}
+.counter-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.counter {
+  padding: 15px 25px;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  min-width: 120px;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.in-counter {
+  background: #4caf50;
+  color: white;
+}
+
+.out-counter {
+  background: #f44336;
+  color: white;
+}
+
+.counter:hover {
+  transform: scale(1.1);
 }
 </style>

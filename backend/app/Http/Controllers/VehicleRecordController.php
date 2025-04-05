@@ -35,71 +35,76 @@ class VehicleRecordController extends Controller
     }
 
     // Function to get vehicle records with pagination & search (Read)
-    public function index(Request $request, $user_id)
-    {
-        $search = $request->query('search');
-        $perPage = $request->query('per_page', 10);
-        $dateFilter = $request->query('date_filter');
-        $startDate = $request->query('start_date');
-        $endDate = $request->query('end_date');
-        $vehicleStatus = $request->query('vehicle_status');
+    // Function to get vehicle records with pagination & search (Read)
+public function index(Request $request, $user_id)
+{
+    $search = $request->query('search');
+    $perPage = $request->query('per_page', 10);
+    $dateFilter = $request->query('date_filter');
+    $startDate = $request->query('start_date');
+    $endDate = $request->query('end_date');
+    $vehicleStatus = $request->query('vehicle_status');
 
-        $query = VehicleRecord::where('user_id', $user_id);
+    $query = VehicleRecord::where('user_id', $user_id);
 
-        // Apply search filter
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('pattern', 'LIKE', "%{$search}%")
-                  ->orWhere('color', 'LIKE', "%{$search}%")
-                  ->orWhere('vehicle_type', 'LIKE', "%{$search}%");
-            });
-        }
-
-        // Filter by vehicle status (1 o 0)
-        if ($vehicleStatus !== null) {
-            $query->where('vehicle_status', $vehicleStatus);
-        }
-
-        // Apply date filter (Yesterday, Today)
-        if ($dateFilter) {
-            if ($dateFilter == 'yesterday') {
-                $query->whereDate('created_at', Carbon::yesterday()->toDateString());
-               
-
-            } elseif ($dateFilter == 'today') {
-                $query->whereDate('created_at', Carbon::today()->toDateString());
-                
-            }
-        }
-
-        // Apply date range filter
-        if ($startDate && $endDate) {
-            $query->whereBetween('created_at', [$startDate, $endDate]);
-        }
-
-        $vehicleRecords = $query->orderBy('created_at', 'desc')->paginate($perPage);
-
-        // Count IN and OUT events dynamically
-        $counts = $this->countInOutEventsForDate($startDate, $endDate);
-
-        return response()->json([
-            'vehicleRecords' => $vehicleRecords,
-            'dateCounts' => $counts,
-        ], 200);
+    // Apply search filter
+    if ($search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('pattern', 'LIKE', "%{$search}%")
+              ->orWhere('color', 'LIKE', "%{$search}%")
+              ->orWhere('vehicle_type', 'LIKE', "%{$search}%");
+        });
     }
 
-    private function countInOutEventsForDate($startDate, $endDate): array
-    {
-        $counts = VehicleRecord::whereBetween('created_at', [$startDate, $endDate])
-            ->selectRaw('SUM(CASE WHEN vehicle_status = 1 THEN 1 ELSE 0 END) as inCount, 
-                         SUM(CASE WHEN vehicle_status = 0 THEN 1 ELSE 0 END) as outCount')
-            ->first();
-    
-        return [
-            'inCount' => $counts->inCount ?? 0,
-            'outCount' => $counts->outCount ?? 0
-        ];
+    // Filter by vehicle status (1 o 0)
+    if ($vehicleStatus !== null) {
+        $query->where('vehicle_status', $vehicleStatus);
     }
+
+    // Apply date filter (Yesterday, Today)
+    if ($dateFilter) {
+        if ($dateFilter == 'yesterday') {
+            $query->whereDate('created_at', Carbon::yesterday()->toDateString());
+        } elseif ($dateFilter == 'today') {
+            $query->whereDate('created_at', Carbon::today()->toDateString());
+        }
+    }
+
+    // Apply date range filter
+    if ($startDate && $endDate) {
+        $query->whereBetween('created_at', [$startDate, $endDate]);
+    }
+
+    $vehicleRecords = $query->orderBy('created_at', 'desc')->paginate($perPage);
+
+    // Count IN and OUT events dynamically for the specific user
+    $counts = $this->countInOutEventsForDate($startDate, $endDate, $user_id);
+
+    return response()->json([
+        'vehicleRecords' => $vehicleRecords,
+        'dateCounts' => $counts,
+    ], 200);
+}
+
+// Function to count IN and OUT events but only for the specific user
+private function countInOutEventsForDate($startDate, $endDate, $user_id): array
+{
+    $query = VehicleRecord::where('user_id', $user_id);
+
+    if ($startDate && $endDate) {
+        $query->whereBetween('created_at', [$startDate, $endDate]);
+    }
+
+    $counts = $query->selectRaw('
+        SUM(CASE WHEN vehicle_status = 1 THEN 1 ELSE 0 END) as inCount, 
+        SUM(CASE WHEN vehicle_status = 0 THEN 1 ELSE 0 END) as outCount
+    ')->first();
+
+    return [
+        'inCount' => $counts->inCount ?? 0,
+        'outCount' => $counts->outCount ?? 0
+    ];
+}
 
     // Function to update a vehicle record (Edit)
     public function update(Request $request, $id)
@@ -139,40 +144,41 @@ class VehicleRecordController extends Controller
 
 
 
-    public function dailyReport(Request $request)
+     public function dailyReport(Request $request, $userId)
     {
         $days = $request->query('days', 7); // Default: Last 7 days
         $startDate = Carbon::today()->subDays($days - 1);
         $endDate = Carbon::now()->endOfDay();
-    
-        // Kunin lahat ng records sa date range
-        $records = VehicleRecord::whereBetween('created_at', [$startDate, $endDate])
-            ->orderBy('created_at', 'asc') // Para tama ang pairing
+
+        // Kunin lahat ng records ng user batay sa user_id
+        $records = VehicleRecord::where('user_id', $userId)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at', 'asc')
             ->get();
-    
+
         $groupedRecords = [];
-        
+
         // Group records by date and plate_number
         foreach ($records as $record) {
             $date = Carbon::parse($record->created_at)->format('Y-m-d');
             $plate = $record->plate_number;
-    
+
             $groupedRecords[$date][$plate][] = $record;
         }
-    
+
         $finalReport = [];
-    
+
         foreach ($groupedRecords as $date => $plates) {
             $inCount = 0;
             $outCount = 0;
             $visitorCount = 0;
             $parkCount = 0;
             $unknownCount = 0;
-    
+
             foreach ($plates as $plate => $entries) {
                 $inTimes = [];
                 $outTimes = [];
-    
+
                 // Hiwalayin ang "in" at "out"
                 foreach ($entries as $entry) {
                     if ($entry->vehicle_status == 1) {
@@ -183,12 +189,12 @@ class VehicleRecordController extends Controller
                         $outCount++;
                     }
                 }
-    
+
                 // Process pairing
                 while (!empty($inTimes) && !empty($outTimes)) {
                     $inTime = array_shift($inTimes);
                     $outTime = null;
-    
+
                     // Hanapin ang pinaka-malapit na "out"
                     foreach ($outTimes as $key => $oTime) {
                         if ($oTime->greaterThan($inTime)) {
@@ -197,10 +203,10 @@ class VehicleRecordController extends Controller
                             break;
                         }
                     }
-    
+
                     if ($outTime) {
                         $duration = $inTime->diffInMinutes($outTime);
-    
+
                         if ($duration >= 30) {
                             $parkCount++;
                         } else {
@@ -210,11 +216,11 @@ class VehicleRecordController extends Controller
                         $unknownCount++;
                     }
                 }
-    
+
                 // Kapag may natitirang in o out na walang kapartner
                 $unknownCount += count($inTimes) + count($outTimes);
             }
-    
+
             $finalReport[] = [
                 'date' => $date,
                 'inCount' => $inCount,
@@ -224,12 +230,11 @@ class VehicleRecordController extends Controller
                 'unknown' => $unknownCount
             ];
         }
-    
+
         return response()->json([
             'message' => 'Daily vehicle report generated successfully!',
             'report' => $finalReport
         ], 200);
     }
-    
 
 }

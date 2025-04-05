@@ -27,7 +27,8 @@ Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkE
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword']);
 Route::post('/vehicle-records', [VehicleRecordController::class, 'store']);
 Route::get('/vehicle-records/{user_id}', [VehicleRecordController::class, 'index']); // Fetch records with search & pagination
-Route::get('/vehicle-records/report/daily', [VehicleRecordController::class, 'dailyReport']);
+// Route::get('/vehicle-records/report/daily', [VehicleRecordController::class, 'dailyReport']);
+Route::get('/vehicle-records/report/daily/{userId}', [VehicleRecordController::class, 'dailyReport']);
 
     // Update a vehicle record
     Route::put('/vehicle-records/{id}', [VehicleRecordController::class, 'update']);
