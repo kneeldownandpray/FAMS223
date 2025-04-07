@@ -78,7 +78,6 @@ export default {
     };
   },
   mounted() {
-  console.log('Received prop:', this.resumeData2);
   if (this.resumeData2) {
     this.populateResumeData(this.resumeData2); 
   }
@@ -122,7 +121,6 @@ export default {
     this.resumeData.skills = json.skills.map(skill => skill.skill_name);
 
     // Certificates
-    console.log(json.certifications);
 
     if (json.certifications && Array.isArray(json.certifications)) {
       // Map through the certifications and extract the certificate_name, filter out any empty strings
@@ -146,7 +144,7 @@ export default {
     return age;
   },
     async generatePDF() {
-      console.log(this.resumeData2);
+
       const templatePath = '/templates/sputum.pdf';
       const imagePath = '/templates/imagessample.jpg';
 
