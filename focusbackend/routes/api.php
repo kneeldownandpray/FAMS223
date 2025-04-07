@@ -15,6 +15,7 @@ use App\Http\Controllers\HiredController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\CertificationController;
+use App\Http\Controllers\ProfileController;
 
 
 // Middleware-protected route to fetch the authenticated user's details
@@ -28,7 +29,6 @@ Route::resource('resumes', ResumeController::class);
 Route::resource('resumes.skills', SkillController::class);
 Route::resource('resumes.certifications', CertificationController::class);
 // Route::resource('resumes.workExperiences', WorkExperienceController::class);
-
 
 // Authentication Routes
 // Route::post('register', [AuthController::class, 'register']); 
@@ -46,6 +46,8 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
 
 // Account Management Routes
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/upload-profile-picture', [ProfileController::class, 'uploadProfilePicture']);
+
 //Admin api
     Route::post('register', [AuthController::class, 'register']); 
     Route::get('/counter/status-one', [CounterController::class, 'countStatusOne']);
