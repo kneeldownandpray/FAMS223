@@ -56,7 +56,11 @@
           </q-item>
         </q-list>
       </q-card-section>
-      <DownloadResume />
+
+   
+      <DownloadResume v-if="resumeData" :resumeData2="resumeData" />
+
+
       <!-- Work Experiences -->
       <q-card-section v-if="!this.HireStatus">
         <h5>Work Experiences</h5>
