@@ -135,7 +135,7 @@ class ResumeController extends Controller
         if (auth()->user()->account_type == 5) { 
             // Fetch the resume along with related user, educational attainments, work experiences, user videos, skills, and certifications
             $resume = Resume::with([
-                'user:id,gender,birthday,email,address',
+                'user:id,gender,birthday,email,address,profile_picture',
                 'educationalAttainments',
                 'workExperiences.jobDescriptions',
                 'userVideos', // Include user videos

@@ -94,7 +94,9 @@
               <div style="display: flex; align-items: center; justify-content: center;">
                 <!-- <q-icon   name="account_circle" size="90px"/> -->
                 <q-avatar size="90px">
-                  <img src="https://pbs.twimg.com/media/F4xcqSTaUAExkuh.jpg:large">
+                  <img src="http://192.168.0.34:8090/storage/profile_pictures/LocR7iWrvpuGZCuHSwo9sTKBg3rQuz1ComLFbO2J.jpg">
+
+                  
                 </q-avatar>
               </div>
               
@@ -143,7 +145,7 @@
 import axios from 'axios';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import UserProfile from '../../components/UserProfile.vue';
-
+const profile_pictures = import.meta.env.VITE_IMG_DP;
 
 export default {
   name: 'ApplicantManager',
