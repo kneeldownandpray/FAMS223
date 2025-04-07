@@ -202,28 +202,37 @@
         </q-card>
       </q-dialog>
 
-      <!-- Work Dialog -->
-      <q-dialog v-model="showWorkDialog">
-        <q-card class="custom-dialog">
-          <q-card-section>
-            <div class="text-h6">Work Experience</div>
-          </q-card-section>
+ <!-- Work Dialog -->
+<q-dialog v-model="showWorkDialog">
+  <q-card class="custom-dialog">
+    <q-card-section>
+      <div class="text-h6">Work Experience</div>
+    </q-card-section>
 
-          <q-card-section>
-            <q-input v-model="work.company_name" label="Company Name" />
-            <q-input v-model="work.company_address" label="Company Address" />
-            <q-input v-model="work.position" label="Position" />
-            <q-input v-model="work.start_date" label="Start Date" type="date" />
-            <q-input v-model="work.end_date" label="End Date" type="date" />
-            <q-input v-model="work.job_description" label="Job Description" type="textarea" />
-          </q-card-section>
+    <q-card-section>
+      <q-input v-model="work.company_name" label="Company Name" />
+      <q-input v-model="work.company_address" label="Company Address" />
+      <q-input v-model="work.position" label="Position" />
+      <q-input v-model="work.start_date" label="Start Date" type="date" />
+      <q-input v-model="work.end_date" label="End Date" type="date" />
 
-          <q-card-actions align="right">
-            <q-btn flat label="Cancel" v-close-popup />
-            <q-btn label="Save" color="primary" @click="addWorkExperience" />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
+      <!-- Dynamic Job Descriptions -->
+      <div v-for="(job_descriptions, index) in work.job_descriptions" :key="index">
+        <q-input v-model="job_descriptions.description" label="Job Description" type="textarea" />
+        <q-btn flat label="Remove Description" color="negative" @click="removeDescription(index)" />
+      </div>
+
+      <!-- Button to Add New Job Description -->
+      <q-btn flat label="Add Description" color="primary" @click="addDescription" />
+    </q-card-section>
+
+    <q-card-actions align="right">
+      <q-btn flat label="Cancel" v-close-popup />
+      <q-btn label="Save" color="primary" @click="addWorkExperience" />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
+
     </div>
     <create-resume @resume-saved="handleResumeSaved" v-else />
   </q-page>
@@ -242,13 +251,14 @@ export default {
       showEducationDialog: false,
       showSkillsDialog: false, // Added for skills dialog visibility
       showCertificateDialog: false, // Add certificate dialog visibility
+  
       work: {
         company_name: '',
         company_address: '',
         position: '',
         start_date: '',
         end_date: '',
-        job_description: '',
+        job_descriptions: [{ description: '' }]
       },
       education: {
         level: '',
@@ -360,7 +370,7 @@ export default {
         position: '',
         start_date: '',
         end_date: '',
-        job_description: '',
+        job_descriptions: [{ description: '' }]
       };
       this.showWorkDialog = true;
     },
@@ -379,7 +389,7 @@ export default {
     async addWorkExperience() {
       try {
         const token = localStorage.getItem('access_token_applicant');
-        const response = await axios.post(`${apiBaseUrl}/resumes/${this.resume.id}/work-experiences`, {
+        const response = await axios.post(`${apiBaseUrl}/work-experiences`, {
           resume_id: this.resume.id,
           ...this.work
         }, {
@@ -391,6 +401,38 @@ export default {
         console.error('Error adding work experience:', error);
       }
     },
+
+    addDescription() {
+    this.work.job_descriptions.push({ description: '' });
+  },
+
+  // Method to remove a job description field
+  removeDescription(index) {
+    this.work.job_descriptions.splice(index, 1);
+  },
+
+  // Method to save work experience with multiple job descriptions
+  // async addWorkExperience() {
+  //   try {
+  //     const token = localStorage.getItem('access_token_applicant');
+  //     const response = await axios.post(`${apiBaseUrl}/resumes/${this.resume.id}/work-experiences`, {
+  //       resume_id: this.resume.id,
+  //       company_name: this.work.company_name,
+  //       company_address: this.work.company_address,
+  //       position: this.work.position,
+  //       start_date: this.work.start_date,
+  //       end_date: this.work.end_date,
+  //       job_descriptions: this.work.job_descriptions
+  //     }, {
+  //       headers: { Authorization: `Bearer ${token}` }
+  //     });
+
+  //     this.resume.work_experiences.push(response.data);
+  //     this.showWorkDialog = false;
+  //   } catch (error) {
+  //     console.error('Error adding work experience:', error);
+  //   }
+  // },
 
     async addEducationalAttainment() {
       try {
