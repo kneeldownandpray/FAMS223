@@ -71,34 +71,78 @@
         <q-btn class="q-mt-sm q-mb-sm q-ml-sm" label="Add Work Experience" @click="openWorkDialog" color="primary" icon="add" />
       </q-list>
 
- <!-- Skills -->
- <br>
- <q-separator  />
-      <div  class="text-h6 q-mb-md">Skills</div>
-      <q-list bordered >
-        <q-item v-for="work in resume.skills" :key="work.id">
-          <q-item-section>
-            <div style="display: flex; align-items: center;" class="q-ml-sm"><div class="q-mr-sm" style="background-color: black; height: 6px; width: 6px; border-radius: 3px; "></div> 
-            {{ work.skill_name }} </div>
-          </q-item-section>
-        </q-item>
-        <q-btn class="q-mt-sm q-mb-sm q-ml-sm" label="Add Skills" @click="openWorkDialog" color="primary" icon="add" />
-      </q-list>
+<!-- Skills Dialog -->
+<q-dialog v-model="showSkillsDialog">
+  <q-card class="custom-dialog">
+    <q-card-section>
+      <div class="text-h6">Add Skills</div>
+    </q-card-section>
+
+    <q-card-section>
+      <q-input v-model="this.skill_name1" label="Skill Name" />
+    </q-card-section>
+
+    <q-card-actions align="right">
+      <q-btn flat label="Cancel" v-close-popup />
+      <q-btn label="Save" color="primary" @click="addSkill" />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
+
+<br>
+<!-- Skills Section -->
+<q-separator />
+<div class="text-h6 q-mb-md">Skills</div>
+<q-list bordered>
+  <q-item v-for="skill in resume.skills" :key="skill.id">
+    <q-item-section>
+      <div style="display: flex; align-items: center;" class="q-ml-sm">
+        <div class="q-mr-sm" style="background-color: black; height: 6px; width: 6px; border-radius: 3px;"></div>
+        {{ skill.skill_name }}
+      </div>
+    </q-item-section>
+  </q-item>
+  <q-btn v-if="!showSkillsDialog" class="q-mt-sm q-mb-sm q-ml-sm" label="Add Skills" @click="openSkillsDialog" color="primary" icon="add" />
+</q-list>
 
 
 
  <!-- Certificates -->
 <br>
- <q-separator  />
-      <div  class="text-h6 q-mb-md">Certificates</div>
-      <q-list bordered >
-        <q-item v-for="work in resume.certifications" :key="work.id">
-          <q-item-section>
-            <div style="display: flex; align-items: center;" class="q-ml-sm"><div class="q-mr-sm" style="background-color: black; height: 6px; width: 6px; border-radius: 3px; "></div> {{ work.certificate_name }} ({{ work.year_received }})</div>
-          </q-item-section>
-        </q-item>
-        <q-btn class="q-mt-sm q-mb-sm q-ml-sm" label="Add Certificates" @click="openWorkDialog" color="primary" icon="add" />
-      </q-list>
+<q-separator />
+<div class="text-h6 q-mb-md">Certificates</div>
+
+
+<q-list bordered>
+  <q-item v-for="certificate in resume.certifications" :key="certificate.id">
+    <q-item-section>
+      <div style="display: flex; align-items: center;" class="q-ml-sm">
+        <div class="q-mr-sm" style="background-color: black; height: 6px; width: 6px; border-radius: 3px;"></div>
+        {{ certificate.certificate_name }} ({{ certificate.year_received }})
+      </div>
+    </q-item-section>
+  </q-item>
+  <q-btn class="q-mt-sm q-mb-sm q-ml-sm" label="Add Certificates" @click="openCertificateDialog" color="primary" icon="add" />
+</q-list>
+
+<!-- Certificate Dialog -->
+<q-dialog v-model="showCertificateDialog">
+  <q-card class="custom-dialog">
+    <q-card-section>
+      <div class="text-h6">Add Certificate</div>
+    </q-card-section>
+
+    <q-card-section>
+      <q-input v-model="certificate.cert_name" label="Certificate Name" />
+      <q-input v-model="certificate.year" label="Year" type="number" />
+    </q-card-section>
+
+    <q-card-actions align="right">
+      <q-btn flat label="Cancel" v-close-popup />
+      <q-btn label="Save" color="primary" @click="addCertificate" />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
 
 
 
@@ -196,6 +240,8 @@ export default {
       resume: null,
       showWorkDialog: false,
       showEducationDialog: false,
+      showSkillsDialog: false, // Added for skills dialog visibility
+      showCertificateDialog: false, // Add certificate dialog visibility
       work: {
         company_name: '',
         company_address: '',
@@ -211,6 +257,11 @@ export default {
         course: '',
         major: '',
       },
+      certificate: {
+        cert_name: '',
+        year: '',
+      },
+      skill_name1:'',
     };
   },
   components: {
@@ -225,32 +276,70 @@ export default {
     }
   },
   methods: {
-   
+
+    openCertificateDialog() {
+      this.certificate = { cert_name: '', year: '' }; // Reset certificate data
+      this.showCertificateDialog = true;
+    },
+
+    async addCertificate() {
+      try {
+        const token = localStorage.getItem('access_token_applicant');
+        const response = await axios.post(`${apiBaseUrl}/resumes/${this.resume.id}/certifications`, {
+          cert_name: this.certificate.cert_name,
+          year: this.certificate.year
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        this.resume.certifications.push(response.data);
+        this.showCertificateDialog = false;
+      } catch (error) {
+        console.error('Error adding certificate:', error);
+      }
+    },
+    openSkillsDialog() {
+      this.skill_name1 = "";
+      this.showSkillsDialog = true; // Show skills dialog
+    },
+
+    async addSkill(skillss) {
+      try {
+       
+        const token = localStorage.getItem('access_token_applicant');
+        const response = await axios.post(`${apiBaseUrl}/resumes/${this.resume.id}/skills`, {
+          skill_name: this.skill_name1, // Ensure skill_name is bound properly
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        this.resume.skills.push(response.data); // Add the new skill to the resume's skills list
+        this.showSkillsDialog = false; // Close the skills dialog after saving
+      } catch (error) {
+        console.error('Error adding skill:', error);
+      }
+    },
+
     async fetchResume() {
-  try {
-    const token = localStorage.getItem('access_token_applicant');
-    const response = await axios.get(`${apiBaseUrl}/resume`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+      try {
+        const token = localStorage.getItem('access_token_applicant');
+        const response = await axios.get(`${apiBaseUrl}/resume`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
 
-    // Check if the response contains the "Resume not found for this user." message
-    if (response.data.message === 'Resume not found for this user.') {
-      this.resume = false;
-    } else {
-      this.resume = response.data;
-    }
-  } catch (error) {
-    // Handle any other errors (e.g., network issues, server issues)
-    // You can log this if needed: console.error('Error fetching resume:', error);
-    this.resume = false; // Optionally set resume to false if an error occurs
-  }
-},
-
+        if (response.data.message === 'Resume not found for this user.') {
+          this.resume = false;
+        } else {
+          this.resume = response.data;
+        }
+      } catch (error) {
+        console.error('Error fetching resume:', error);
+        this.resume = false;
+      }
+    },
 
     handleResumeSaved() {
-      // this.$router.go(0);
       this.fetchResume();
     },
+
     calculateAge(birthday) {
       const today = new Date();
       const birthDate = new Date(birthday);
@@ -263,8 +352,8 @@ export default {
       
       return age;
     },
+
     openWorkDialog() {
-      // Clear work data
       this.work = {
         company_name: '',
         company_address: '',
@@ -277,7 +366,6 @@ export default {
     },
 
     openEducationDialog() {
-      // Clear education data
       this.education = {
         level: '',
         institution: '',
@@ -287,10 +375,11 @@ export default {
       };
       this.showEducationDialog = true;
     },
+
     async addWorkExperience() {
       try {
         const token = localStorage.getItem('access_token_applicant');
-        const response = await axios.post(`${apiBaseUrl}/work-experiences`, {
+        const response = await axios.post(`${apiBaseUrl}/resumes/${this.resume.id}/work-experiences`, {
           resume_id: this.resume.id,
           ...this.work
         }, {
@@ -299,45 +388,14 @@ export default {
         this.resume.work_experiences.push(response.data);
         this.showWorkDialog = false;
       } catch (error) {
-        // console.error('Error adding work experience:', error);
+        console.error('Error adding work experience:', error);
       }
     },
 
-    async addCertificates() {
-      try {
-        const token = localStorage.getItem('access_token_applicant');
-        const response = await axios.post(`${apiBaseUrl}/work-experiences`, {
-          resume_id: this.resume.id,
-          ...this.work
-        }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        this.resume.work_experiences.push(response.data);
-        this.showWorkDialog = false;
-      } catch (error) {
-        // console.error('Error adding work experience:', error);
-      }
-    },
-    async addWorkSkills() {
-      try {
-        const token = localStorage.getItem('access_token_applicant');
-        const response = await axios.post(`${apiBaseUrl}/work-experiences`, {
-          resume_id: this.resume.id,
-          ...this.work
-        }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        this.resume.work_experiences.push(response.data);
-        this.showWorkDialog = false;
-      } catch (error) {
-        // console.error('Error adding work experience:', error);
-      }
-    },
     async addEducationalAttainment() {
       try {
         const token = localStorage.getItem('access_token_applicant');
-        const response = await axios.post(`${apiBaseUrl}/educational-attainments`, {
-          resume_id: this.resume.id,
+        const response = await axios.post(`${apiBaseUrl}/resumes/${this.resume.id}/educational-attainments`, {
           ...this.education
         }, {
           headers: { Authorization: `Bearer ${token}` }
@@ -345,7 +403,7 @@ export default {
         this.resume.educational_attainments.push(response.data);
         this.showEducationDialog = false;
       } catch (error) {
-        // console.error('Error adding educational attainment:', error);
+        console.error('Error adding educational attainment:', error);
       }
     },
 
@@ -361,6 +419,8 @@ export default {
   }
 };
 </script>
+
+
 
 
 <!-- <style scoped>
