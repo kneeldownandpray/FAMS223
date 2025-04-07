@@ -56,7 +56,7 @@
           </q-item>
         </q-list>
       </q-card-section>
-
+      <DownloadResume />
       <!-- Work Experiences -->
       <q-card-section v-if="!this.HireStatus">
         <h5>Work Experiences</h5>
@@ -71,9 +71,60 @@
         </q-list>
       </q-card-section>
 
+      <q-card-section  >
+        <h5>Work Experiences</h5>
+        <q-list>
+          <q-item v-for="experience in resumeData.work_experiences" :key="experience.id">
+            <q-item-section>
+              <p><strong>{{ experience.company_name }}:</strong> {{ experience.position }}</p>
+              <p>{{ experience.job_description }}</p>
+              <p><strong>Start Date:</strong> {{ experience.start_date }} | <strong>End Date:</strong> {{ experience.end_date }}</p>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-card-section>
+
+
+      <q-card-section >
+        <h5>Skills</h5>
+        <q-list>
+          <q-item v-for="experience in resumeData.skills" :key="experience.id">
+            <q-item-section>
+              <!-- <p><strong>{{ experience.skill_name }}:</strong> {{ experience.position }}</p> -->
+              <!-- <p>{{ experience.skill_name }}</p> -->
+              <div style="display: flex; gap: 10px;">
+                <div style="    height: 20px;display: flex;align-content: center;justify-content: center; align-items: center;">
+                  <div class="q-mr-sm" style="background-color: black; height: 6px; width: 6px; border-radius: 3px;"></div>
+                </div>
+                {{ experience.skill_name }} </div>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-card-section>
+
+      
+      <q-card-section >
+        <h5>Certificates</h5>
+        <q-list>
+          <q-item v-for="experience in resumeData.skills" :key="experience.id">
+            <q-item-section>
+              <!-- <p><strong>{{ experience.skill_name }}:</strong> {{ experience.position }}</p> -->
+              <!-- <p>{{ experience.skill_name }}</p> -->
+              <div style="display: flex; gap: 10px;">
+                <div style="    height: 20px;display: flex;align-content: center;justify-content: center; align-items: center;">
+                  <div class="q-mr-sm" style="background-color: black; height: 6px; width: 6px; border-radius: 3px;"></div>
+                </div>
+                {{ experience.skill_name }} </div>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-card-section>
+
+
+
       <!-- User Videos -->
       <q-card-section v-if="resumeData.user_videos && resumeData.user_videos.length">
-        <h5>User Videos</h5>
+        <h5>Videos</h5>
        
           <div class="q-mb-lg" v-for="(video, index) in (showMoreVideos ? resumeData.user_videos : resumeData.user_videos.slice(0, 3))" :key="video.id">
             <q-item-section class="video-info-wrapper ">
@@ -113,11 +164,15 @@
 <script>
 import { defineComponent } from 'vue';
 import axios from 'axios';
+import DownloadResume from '../components/DownloadResume.vue';
+
+
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export default defineComponent({
   name: 'defaultpage',
+  components: { DownloadResume},
   data() {
     return {
       resumeData: null,

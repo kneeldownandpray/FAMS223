@@ -111,9 +111,10 @@
               <p><strong>Profession:</strong> {{ selectedResume.profession }}</p>
             </div>
           </q-card-section>
+          
           <q-card-actions>
             <q-btn @click="dialog = false" label="Close" color="primary"/>
-            <q-btn @click="displayFullResume = true" label="Full Resume & Videos" color="green"/>
+            <q-btn @click="displayFullResume = true" label="Other Details & Videos" color="green"/>
           </q-card-actions>
         </q-card>
       </q-dialog>

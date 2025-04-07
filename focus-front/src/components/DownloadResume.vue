@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md q-bg-primary" style="background-color: #2c2c2c; height: 100vh;">
+  <div class="q-pa-md q-bg-primary" style="">
     <q-btn push color="white" text-color="primary" @click="generatePDF" label="Download Resume (PDF)" />
   </div>
 </template>
