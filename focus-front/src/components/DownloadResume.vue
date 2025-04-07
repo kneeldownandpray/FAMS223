@@ -70,7 +70,8 @@ export default {
           { companyname: "", companyaddress: "", position: "", date: "", jobdescription: [] },
         ],
         skills: [],
-        certificates: [{}],
+        certificates: [],
+        
       },
 
 
@@ -79,7 +80,7 @@ export default {
   mounted() {
   console.log('Received prop:', this.resumeData2);
   if (this.resumeData2) {
-    this.populateResumeData(this.resumeData2); // ← Dapat may `this.`
+    this.populateResumeData(this.resumeData2); 
   }
 },
   methods: {
@@ -121,10 +122,17 @@ export default {
     this.resumeData.skills = json.skills.map(skill => skill.skill_name);
 
     // Certificates
-    this.resumeData.certificates = json.certifications.map(cert => ({
-      name: cert.certificate_name,
-      year: cert.year_received
-    }));
+    console.log(json.certifications);
+
+    if (json.certifications && Array.isArray(json.certifications)) {
+      // Map through the certifications and extract the certificate_name, filter out any empty strings
+      this.resumeData.certificates = json.certifications
+        .map(cert => cert.certificate_name || "")  // Extract certificate_name
+        .filter(cert => cert);  // Remove any empty strings or undefined values
+    } else {
+      this.resumeData.certificates = [];  // Default to empty array if certifications is not valid
+    }
+
   },
 
   calculateAge(birthday) {
