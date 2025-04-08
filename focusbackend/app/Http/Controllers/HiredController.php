@@ -132,14 +132,16 @@ class HiredController extends Controller
     public function isUserHired($applicantId)
     {
         $userId = auth()->user()->id;
-    
-        // Check if the logged-in user has hired the specified applicant
+        
+        // Check if the logged-in user has hired the specified applicant and the hire has been approved by the admin
         $isHired = Hired::where('employer_id', $userId)
             ->where('applicant_id', $applicantId)
+            ->where('approval_of_admin', 1) // Make sure the admin has approved the hiring
             ->exists();
-    
+        
         return response()->json(['is_hired' => $isHired]);
     }
+    
     public function displayAllNotAcceptable(Request $request)
 {
     if (auth()->user()->account_type <= 3) { // Admin check

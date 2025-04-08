@@ -11,10 +11,14 @@
     </div>
     <!-- Resume display once data is fetched -->
     <q-card v-if="resumeData && !loading" class="q-ma-xs">
-      <!-- {{ resumeData }} -->
-      <div style="display: flex; justify-content:space-between;" v-if="!this.HireStatus">
 
-        <q-card-section v-if="!this.HireStatus">
+   <div v-if="!this.showResumeStatus && this.DetailDisplayer">
+      <DownloadResume v-if="resumeData" :resumeData2="resumeData"  />
+    </div>
+      <!-- {{ resumeData }} -->
+      <div style="display: flex; justify-content:space-between;" v-if="!this.showResumeStatus && this.DetailDisplayer">
+
+        <q-card-section v-if="!this.showResumeStatus && this.DetailDisplayer">
         <p class="b3-title q-mb-md q-mt-sm ">{{ resumeData.full_name }}</p>  
         <p><strong>Address:</strong> {{ resumeData.address }}</p>
         <p><strong>Birth Address:</strong> {{ resumeData.birth_address }}</p>
@@ -37,7 +41,7 @@
 
 
       <!-- Educational Attainments -->
-      <q-card-section v-if="!this.HireStatus">
+      <q-card-section v-if="!this.showResumeStatus && this.DetailDisplayer">
         <h5>Educational Attainments</h5>
         <q-list>
           <q-item v-for="education in resumeData.educational_attainments" :key="education.id">
@@ -57,12 +61,10 @@
         </q-list>
       </q-card-section>
 
-   
-      <DownloadResume v-if="resumeData" :resumeData2="resumeData" />
-
 
       <!-- Work Experiences -->
-      <q-card-section v-if="!this.HireStatus">
+     
+      <q-card-section v-if="!this.showResumeStatus && this.DetailDisplayer"  >
         <h5>Work Experiences</h5>
         <q-list>
           <q-item v-for="experience in resumeData.work_experiences" :key="experience.id">
@@ -75,21 +77,8 @@
         </q-list>
       </q-card-section>
 
-      <q-card-section  >
-        <h5>Work Experiences</h5>
-        <q-list>
-          <q-item v-for="experience in resumeData.work_experiences" :key="experience.id">
-            <q-item-section>
-              <p><strong>{{ experience.company_name }}:</strong> {{ experience.position }}</p>
-              <p>{{ experience.job_description }}</p>
-              <p><strong>Start Date:</strong> {{ experience.start_date }} | <strong>End Date:</strong> {{ experience.end_date }}</p>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-card-section>
 
-
-      <q-card-section >
+      <q-card-section v-if="!this.showResumeStatus && this.DetailDisplayer" >
         <h5>Skills</h5>
         <q-list>
           <q-item v-for="experience in resumeData.skills" :key="experience.id">
@@ -107,7 +96,7 @@
       </q-card-section>
 
       
-      <q-card-section >
+      <q-card-section v-if="!this.showResumeStatus && this.DetailDisplayer" >
         <h5>Certificates</h5>
         <q-list>
           <q-item v-for="experience in resumeData.skills" :key="experience.id">
@@ -180,14 +169,19 @@ export default defineComponent({
   data() {
     return {
       resumeData: null,
+      showResumeStatus:true,
       loading: true,
+      DetailDisplayer:false,
       errorMessage: '',
       showMoreVideos: false, // New property to control video visibility
     };
   },
   mounted() {
     this.fetchStatus();
-   
+    if (!this.hired_statusb) {
+    this.showResumeStatus = false; // Set HireStatus to true
+    console.log('hired_statusb is:', this.hired_statusb); // Output the value
+  }
   },
   methods: {
     async fetchStatus() {
@@ -207,7 +201,12 @@ export default defineComponent({
     // console.log(response3)
  
     this.HireStatus = response3.data.is_hired;
-    console.log(this.HireStatus);
+    if(!this.HireStatus){
+      this.DetailDisplayer = false;
+    }
+    else {
+      this.DetailDisplayer = true;
+    }
     this.fetchResume();
  
 
@@ -275,13 +274,27 @@ export default defineComponent({
   if (this.showMoreVideos && this.resumeData.user_videos.length <= 5) {
     this.showMoreVideos = false; // Reset if less than or equal to 5
   }
+},
+test2(newValue){
+console.log(newValue);
 }
   },
+  watch: {
+  // Watch the prop 'hired_statusb' and update 'HireStatus' accordingly
+  // hired_statusb(newValue) {
+  //   this.showResumeStatus = newValue;
+  //   test2(newValue);
+  // }
+},
   props: {
     number: {
       type: Number,
       required: true
     },
+    hired_statusb: {
+    type: Boolean,
+    required: true
+  }
   }
 });
 </script>

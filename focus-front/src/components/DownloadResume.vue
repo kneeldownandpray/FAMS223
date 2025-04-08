@@ -1,4 +1,4 @@
-<template>
+<template>{{ this.linkenv }}{{ resumeData2.user.profile_picture }}
   <div class="q-pa-md q-bg-primary" style="">
     <q-btn push color="white" text-color="primary" @click="generatePDF" label="Download Resume (PDF)" />
   </div>
@@ -7,7 +7,7 @@
 <script>
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { saveAs } from 'file-saver';
-
+const ImageBaseUrl = import.meta.env.VITE_IMG_DP;
 export default {
 
   props: {
@@ -18,6 +18,8 @@ export default {
   },
   data() {
     return {
+      linkenv:null,
+      imgsourcelink:"http://192.168.0.34:8090/api/image/NZsdfLtchlpxNjz8lipC5I0YEEPQiNKah2CpKQIX.jpg",
       // resumeData: {
       //   name: "Maria Clara Santos",
       //   address: "Quezon City, Philippines",
@@ -71,7 +73,8 @@ export default {
         ],
         skills: [],
         certificates: [],
-        
+       
+      
       },
 
 
@@ -85,6 +88,7 @@ export default {
   methods: {
 
     populateResumeData(json) {
+      this.linkenv = ImageBaseUrl;
     this.resumeData.name = json.full_name || "";
     this.resumeData.address = json.address || "";
     this.resumeData.mobileNumber = json.contact_no || "";
@@ -146,7 +150,7 @@ export default {
     async generatePDF() {
 
       const templatePath = '/templates/sputum.pdf';
-      const imagePath = '/templates/imagessample.jpg';
+      const imagePath = this.imgsourcelink;
 
       try {
         const [existingPdfBytes, imageBytes] = await Promise.all([

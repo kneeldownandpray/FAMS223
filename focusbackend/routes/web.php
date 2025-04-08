@@ -27,3 +27,18 @@ Route::get('/test-email', function () {
 
     return 'Test email sent!';
 });
+
+Route::get('/api/image/{filename}', function ($filename) {
+    $path = storage_path('app/public/profile_pictures/' . $filename);
+
+    if (!file_exists($path)) {
+        abort(404);
+    }
+
+    $mimeType = mime_content_type($path);
+
+    return response()->file($path, [
+        'Content-Type' => $mimeType,
+        'Access-Control-Allow-Origin' => '*',
+    ]);
+});

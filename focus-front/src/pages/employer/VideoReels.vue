@@ -8,7 +8,7 @@
 </div>
       <!-- </div> -->
 
-    <UserProfile :number="currentVideo.user_id" @HireStatus="HireStatus" />
+    <UserProfile :number="currentVideo.user_id" :hired_statusb="true"  @HireStatus="HireStatus" />
 
   </q-page>
   <div class="video-wrapper" v-else>

@@ -8,7 +8,7 @@
       <q-btn v-if="currentTab == 'rejected'"  class="q-mr-md q-mt-md" color="red" disable="" icon="cancel" label="Rejected!"  />
     </div>
 
-    <UserProfile  :number="this.selectedResume.user_id"  />
+    <UserProfile  :number="this.selectedResume.user_id" :hired_statusb="false" />
   </div>
 
   <q-page padding v-else>
@@ -93,11 +93,14 @@
             <div v-if="!hideResumeContent">
               <div style="display: flex; align-items: center; justify-content: center;">
                 <!-- <q-icon   name="account_circle" size="90px"/> -->
-                <q-avatar size="90px">
+                <!-- <q-avatar size="90px">
                   <img src="http://192.168.0.34:8090/storage/profile_pictures/LocR7iWrvpuGZCuHSwo9sTKBg3rQuz1ComLFbO2J.jpg">
 
                   
-                </q-avatar>
+                </q-avatar> -->
+
+                <img  @click="toggleApplicantDetails(entry)"  :src="this.linkenv + getProfileinfo.profile_picture" alt="" style="height: 160px; width: 160px;     box-shadow: rgb(149 157 165 / 51%) 1px 2px 6px;  border-radius: 50%;">
+
               </div>
               
               <h5>{{ selectedResume.full_name }}</h5>
@@ -145,7 +148,7 @@
 import axios from 'axios';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import UserProfile from '../../components/UserProfile.vue';
-const profile_pictures = import.meta.env.VITE_IMG_DP;
+const ImageBaseUrl = import.meta.env.VITE_IMG_DP;
 
 export default {
   name: 'ApplicantManager',
@@ -159,6 +162,8 @@ export default {
       confirmDialog: false,
       displayFullResume:false,
       selectedResume: {},
+      getProfileinfo:{},
+      linkenv:null,
       hideResumeContent:false,
       currentTab: 'hired', // Default to the 'hired' tab
       resumeColumns: [
@@ -174,6 +179,7 @@ export default {
       this.dialog = false;
     },
     async fetchApplicants(status) {
+      this.linkenv = ImageBaseUrl;
       try {
         this.currentTab = status; // Set current tab based on button clicked
         const token = localStorage.getItem('access_token_employer');
@@ -233,6 +239,9 @@ export default {
       else{
         this.hideResumeContent = false;
       }
+      this.getProfileinfo =  resume.applicant; 
+
+      console.log(this.getProfileinfo);
       this.selectedResume = resume.applicant.resume;
       this.dialog = true;
     },
