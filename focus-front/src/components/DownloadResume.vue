@@ -1,6 +1,5 @@
-<template>{{ this.imgsourcelink }} 
+<template>
 <br>
-http://192.168.0.34:8090/api/image/NZsdfLtchlpxNjz8lipC5I0YEEPQiNKah2CpKQIX.jpg
   <div class="q-pa-md q-bg-primary" style="">
     <q-btn push color="white" text-color="primary" @click="generatePDF" label="Download Resume (PDF)" />
   </div>
@@ -134,7 +133,7 @@ export default {
     if (json.certifications && Array.isArray(json.certifications)) {
       // Map through the certifications and extract the certificate_name, filter out any empty strings
       this.resumeData.certificates = json.certifications
-        .map(cert => cert.certificate_name || "")  // Extract certificate_name
+        .map(cert => cert.certificate_name + "(" + cert.year_received + ")"|| "")  // Extract certificate_name
         .filter(cert => cert);  // Remove any empty strings or undefined values
     } else {
       this.resumeData.certificates = [];  // Default to empty array if certifications is not valid
@@ -156,7 +155,6 @@ export default {
 
       const templatePath = '/templates/sputum.pdf';
       const imagePath = this.imgsourcelink;
-
       try {
         const [existingPdfBytes, imageBytes] = await Promise.all([
           fetch(templatePath).then(res => res.arrayBuffer()),
@@ -164,7 +162,17 @@ export default {
         ]);
 
         const pdfDoc = await PDFDocument.load(existingPdfBytes);
-        const image = await pdfDoc.embedJpg(imageBytes);
+        // const image = await pdfDoc.embedJpg(imageBytes);
+
+        const imageExtension = imagePath.split('.').pop().toLowerCase();
+let image;
+if (imageExtension === 'jpg' || imageExtension === 'jpeg') {
+  image = await pdfDoc.embedJpg(imageBytes);
+} else if (imageExtension === 'png') {
+  image = await pdfDoc.embedPng(imageBytes);
+} else {
+  throw new Error('Unsupported image format');
+}
         const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
         const helveticaBoldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
         let page1 = pdfDoc.getPages()[0];

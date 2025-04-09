@@ -99,7 +99,7 @@
                   
                 </q-avatar> -->
 
-                <img  @click="toggleApplicantDetails(entry)"  :src="this.linkenv + getProfileinfo.profile_picture" alt="" style="height: 160px; width: 160px;     box-shadow: rgb(149 157 165 / 51%) 1px 2px 6px;  border-radius: 50%;">
+                <img  @click="toggleApplicantDetails(entry)"  :src="this.imgsourcelink" alt="" style="height: 160px; width: 160px;     box-shadow: rgb(149 157 165 / 51%) 1px 2px 6px;  border-radius: 50%;">
 
               </div>
               
@@ -164,6 +164,7 @@ export default {
       selectedResume: {},
       getProfileinfo:{},
       linkenv:null,
+      imgsourcelink:null,
       hideResumeContent:false,
       currentTab: 'hired', // Default to the 'hired' tab
       resumeColumns: [
@@ -174,6 +175,10 @@ export default {
     };
   },
   methods: {
+    
+    getresumeLink(get){
+      this.imgsourcelink = this.linkenv + get.replace('profile_pictures/', '');
+    },
     BackFunction(){
       this.displayFullResume = false;
       this.dialog = false;
@@ -240,8 +245,8 @@ export default {
         this.hideResumeContent = false;
       }
       this.getProfileinfo =  resume.applicant; 
-
-      console.log(this.getProfileinfo);
+      this.getresumeLink(this.getProfileinfo.profile_picture)
+   
       this.selectedResume = resume.applicant.resume;
       this.dialog = true;
     },

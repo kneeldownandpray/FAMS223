@@ -20,7 +20,7 @@
 
     <!-- Profile Picture -->
     <img
-      :src="this.linkenv + resume.user.profile_picture"
+      :src="this.imgsourcelink"
       alt=""
       style="height: 160px; width: 160px; border-radius: 50%;
             box-shadow: rgb(149 157 165 / 51%) 1px 2px 6px;"
@@ -76,10 +76,10 @@
             <div><strong class="q-mr-sm">Level:</strong> {{ education.level }}</div>
             <div ><strong class="q-mr-sm">Institution:</strong> {{ education.institution }}</div>
             <div v-if="education.level !== 'Primary' && (education.level === 'Secondary' || education.level === 'Tertiary')">
-              <strong class="q-mr-sm">Course:</strong> {{ education.course }}
+              <strong v-if="education.course" class="q-mr-sm">Course:</strong> {{ education.course }}
             </div>
             <div v-if="education.level !== 'Primary' && (education.level === 'Secondary' || education.level === 'Tertiary')">
-              <strong class="q-mr-sm">Major:</strong> {{ education.major }}
+              <strong  v-if="education.major" class="q-mr-sm">Major:</strong> {{ education.major }}
             </div>
             <div><strong class="q-mr-sm">Period:</strong> {{ education.period }}</div>
           </q-item-section>
@@ -293,6 +293,8 @@ export default {
       showSkillsDialog: false, // Added for skills dialog visibility
       showCertificateDialog: false, // Add certificate dialog visibility
       linkenv:null,
+      resumeProfilePic:null,
+      imgsourcelink:null,
   
       work: {
         company_name: '',
@@ -388,10 +390,15 @@ export default {
         } else {
           this.resume = response.data;
         }
+        this.getresumeLink(this.resume.user.profile_picture);
       } catch (error) {
         console.error('Error fetching resume:', error);
         this.resume = false;
       }
+    },
+
+    getresumeLink(get){
+      this.imgsourcelink = this.linkenv + get.replace('profile_pictures/', '');
     },
 
     handleResumeSaved() {
@@ -485,7 +492,8 @@ export default {
     async addEducationalAttainment() {
       try {
         const token = localStorage.getItem('access_token_applicant');
-        const response = await axios.post(`${apiBaseUrl}/resumes/${this.resume.id}/educational-attainments`, {
+        const response = await axios.post(`${apiBaseUrl}/educational-attainments`, {
+          resume_id: this.resume.id,
           ...this.education
         }, {
           headers: { Authorization: `Bearer ${token}` }
@@ -493,7 +501,7 @@ export default {
         this.resume.educational_attainments.push(response.data);
         this.showEducationDialog = false;
       } catch (error) {
-        console.error('Error adding educational attainment:', error);
+        // console.error('Error adding educational attainment:', error);
       }
     },
 
