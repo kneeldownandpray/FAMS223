@@ -3,7 +3,45 @@
     
     <div v-if="resume">
       <!-- CV or Resume -->
-      <div class="text-h3 q-mb-md"><strong>CV or Resume</strong></div>
+      <div class="text-h3 q-mb-md" style="
+    display: flex;
+    justify-content: space-between;
+      "><strong>CV or Resume</strong>
+      <div style="cursor: pointer; position: relative; width: 160px; height: 160px;">
+    <!-- Black Overlay with Pencil Icon (hidden by default) -->
+    <div  @click="showDialogForProfilePic = true"
+      class="overlay"
+      style="background-color: black; position: absolute; top: 0; left: 0; width: 160px; height: 160px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            box-shadow: rgb(149 157 165 / 51%) 1px 2px 6px; opacity: 0; transition: opacity 0.3s;"
+    >
+      <q-icon name="edit" color="white" size="32px" />
+    </div>
+
+    <!-- Profile Picture -->
+    <img
+      :src="this.linkenv + resume.user.profile_picture"
+      alt=""
+      style="height: 160px; width: 160px; border-radius: 50%;
+            box-shadow: rgb(149 157 165 / 51%) 1px 2px 6px;"
+    >
+  </div>
+    </div>
+    <q-dialog v-model="showDialogForProfilePic" persistent>
+  <q-card class="q-pa-md" style="min-width: 300px; max-width: 400px;">
+    <div class="row items-center justify-between q-mb-md">
+      <div class="text-h6">Upload Profile Picture</div>
+      <q-btn flat round dense icon="close" @click="showDialogForProfilePic = false" />
+    </div>
+
+    <q-separator />
+
+    <div class="q-mt-md">
+      <UploadPP   @file-uploaded="handleFileUploadSuccess"
+      @upload-error="handleUploadError" />
+    </div>
+  </q-card>
+</q-dialog>
       <q-card flat bordered class="q-mb-lg">
         <q-card-section>
           <!-- Resume Details -->
@@ -241,16 +279,20 @@
 import axios from 'axios';
 import CreateResume from '../../components/CreateResume.vue'; // Import your CreateResume component
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+const ImageBaseUrl = import.meta.env.VITE_IMG_DP;
+import UploadPP from '../../components/UploadProfilePic.vue'; 
 
 export default {
   name: 'ResumePage',
   data() {
     return {
       resume: null,
+      showDialogForProfilePic:false,
       showWorkDialog: false,
       showEducationDialog: false,
       showSkillsDialog: false, // Added for skills dialog visibility
       showCertificateDialog: false, // Add certificate dialog visibility
+      linkenv:null,
   
       work: {
         company_name: '',
@@ -275,7 +317,7 @@ export default {
     };
   },
   components: {
-    CreateResume // Register the CreateResume component
+    CreateResume,UploadPP
   },
   computed: {
     showEducationButton() {
@@ -286,7 +328,12 @@ export default {
     }
   },
   methods: {
-
+    handleFileUploadSuccess(path) {
+      this.$router.go(); // or this.$router.replace(...) if gusto mo refresh route
+    },
+    handleUploadError(message) {
+      alert('Upload failed: ' + message);
+    },
     openCertificateDialog() {
       this.certificate = { cert_name: '', year: '' }; // Reset certificate data
       this.showCertificateDialog = true;
@@ -329,6 +376,7 @@ export default {
     },
 
     async fetchResume() {
+      this.linkenv = ImageBaseUrl;
       try {
         const token = localStorage.getItem('access_token_applicant');
         const response = await axios.get(`${apiBaseUrl}/resume`, {
@@ -463,7 +511,12 @@ export default {
 </script>
 
 
-
+<style scoped>
+/* Hover effect */
+ .overlay:hover {
+  opacity: 0.7 !important;
+}
+</style>
 
 <!-- <style scoped>
 .q-page {

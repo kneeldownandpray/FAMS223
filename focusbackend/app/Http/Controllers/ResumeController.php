@@ -114,11 +114,11 @@ class ResumeController extends Controller
     {
         $userId = auth()->id();
         $resume = Resume::with([
-            'user:id,gender,birthday,email,address', 
+            'user:id,gender,birthday,email,address,profile_picture', 
             'educationalAttainments', 
             'workExperiences.jobDescriptions', // Include jobDescriptions
             'skills', 
-            'certifications'
+            'certifications',
         ])
         ->where('user_id', $userId)
         ->first();

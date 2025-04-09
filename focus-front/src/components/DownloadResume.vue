@@ -1,4 +1,6 @@
-<template>{{ this.linkenv }}{{ resumeData2.user.profile_picture }}
+<template>{{ this.imgsourcelink }} 
+<br>
+http://192.168.0.34:8090/api/image/NZsdfLtchlpxNjz8lipC5I0YEEPQiNKah2CpKQIX.jpg
   <div class="q-pa-md q-bg-primary" style="">
     <q-btn push color="white" text-color="primary" @click="generatePDF" label="Download Resume (PDF)" />
   </div>
@@ -7,7 +9,7 @@
 <script>
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { saveAs } from 'file-saver';
-const ImageBaseUrl = import.meta.env.VITE_IMG_DP;
+const ImageBaseUrl = import.meta.env.VITE_IMG_PDF_DL;
 export default {
 
   props: {
@@ -19,7 +21,7 @@ export default {
   data() {
     return {
       linkenv:null,
-      imgsourcelink:"http://192.168.0.34:8090/api/image/NZsdfLtchlpxNjz8lipC5I0YEEPQiNKah2CpKQIX.jpg",
+      imgsourcelink:"",
       // resumeData: {
       //   name: "Maria Clara Santos",
       //   address: "Quezon City, Philippines",
@@ -89,6 +91,9 @@ export default {
 
     populateResumeData(json) {
       this.linkenv = ImageBaseUrl;
+      // Assume json.user.profile_picture is something like 'profile_pictures/filename.jpg'
+    this.imgsourcelink = this.linkenv + json.user.profile_picture.replace('profile_pictures/', '');
+
     this.resumeData.name = json.full_name || "";
     this.resumeData.address = json.address || "";
     this.resumeData.mobileNumber = json.contact_no || "";
