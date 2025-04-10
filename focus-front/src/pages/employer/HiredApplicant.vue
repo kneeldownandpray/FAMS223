@@ -43,9 +43,16 @@
         <q-card-section  >
           <div class="q-gutter-md" style="display: flex; justify-content: space-between;">
             <div>
-              <q-icon @click="toggleApplicantDetails(entry)" v-if="entry.approval_of_admin == 1"  name="account_circle" size="50px"/>
-              <q-icon v-else  name="account_circle" size="50px"/>
+              <!-- <q-icon @click="toggleApplicantDetails(entry)" v-if="entry.approval_of_admin == 1"  name="account_circle" size="50px"/>
+              <q-icon v-else  name="account_circle" size="50px"/> -->
+
+
+              <img  @click="toggleApplicantDetails(entry)"     :src="linkenv + '' + entry.applicant.profile_picture.replace('profile_pictures/', '')" alt="" style="height: 50px; width: 50px;     box-shadow: rgb(149 157 165 / 51%) 1px 2px 6px;  border-radius: 50%;">
+
+              
               <q-btn flat @click="toggleApplicantDetails(entry)" v-if="entry.approval_of_admin == 1">
+
+               
                 {{ entry.applicant.first_name }} {{ entry.applicant.last_name }}
               </q-btn>
               <q-btn flat v-else>

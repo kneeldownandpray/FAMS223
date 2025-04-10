@@ -47,16 +47,19 @@
 </template>
 
 <script>
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+import axios from 'axios';
 export default {
   name: 'VisaStatusTracker',
 
   data() {
     return {
       displayVisaStatus: true,
-      currentStep: 4, // Set this value from 1 to 8
+      currentStep: null, // Set this value from 1 to 8
       dialogVisible: false, // Controls visibility of the dialog
       selectedStep: null, // Stores the step details for the dialog
-      showSkillAssessment: true, // Toggle visibility for 'Skill Assessment' step
+      showSkillAssessment: false, // Toggle visibility for 'Skill Assessment' step
+      user:null,
       steps: [
         { 
           label: 'Application Recieved', 
@@ -112,6 +115,31 @@ export default {
   },
 
   methods: {
+    async fetchUserData() {
+
+try {
+  const token = localStorage.getItem('access_token_applicant');
+  const response = await axios.get(`${apiBaseUrl}/shortpolling`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  this.currentStep = response.data.visa_status;
+  if(response.data.skill_assessment == 0){
+
+    this.showSkillAssessment = false;
+
+  }
+  else{
+    this.showSkillAssessment = true;
+  }
+  console.log(this.user);
+} catch (error) {
+  console.error('Failed to fetch user data:', error);
+}
+
+},
     toggleSkillAssessment() {
       // Toggle the visibility of the 'Skill Assessment' step
       this.showSkillAssessment = false;
@@ -149,7 +177,7 @@ export default {
   },
 
   mounted() {
-    console.log('Visa tracker mounted');
+this.fetchUserData();
     this.triggerAlert(); // Trigger the alert/dialog automatically
     if(!this.showSkillAssessment){
       this.toggleSkillAssessment();
