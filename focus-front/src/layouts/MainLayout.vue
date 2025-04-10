@@ -105,6 +105,14 @@
             <q-item-label>Videos</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item v-if="user?.account_type === 6" @click="this.VisaStatusDialog = true" active-class="q-item-no-link-highlighting" style="cursor: pointer;">
+          <q-item-section avatar @click="this.VisaStatusDialog = true"  >
+            <q-icon name="fa-solid fa-plane" size="20px" />
+          </q-item-section>
+          <q-item-section @click="this.VisaStatusDialog = true" style="cursor: pointer;">
+            <q-item-label >Visa Status</q-item-label>
+          </q-item-section>
+        </q-item>
 
         <q-item v-if="user?.account_type === 5" to="/employer/profile" active-class="q-item-no-link-highlighting">
        <q-item-section avatar>
@@ -139,10 +147,19 @@
     <q-page-container class="bg-grey-2">
       <router-view />
     </q-page-container>
+    <q-dialog v-model="VisaStatusDialog">
+      <q-card class="q-pa-xl">   
+            <VisaStatus />
+      </q-card>
+    </q-dialog>
+
+
+
   </q-layout>
 </template>
 <script>
 import EssentialLink from 'components/EssentialLink.vue';
+import VisaStatus from 'components/VisaStatus.vue';
 import Messages from './Messages.vue';
 import axios from 'axios';
 import router from 'src/router';
@@ -156,7 +173,8 @@ export default {
 
   components: {
     EssentialLink,
-    Messages
+    Messages,
+    VisaStatus
   },
 
   data() {
@@ -165,7 +183,8 @@ export default {
       first_name: '',
       user: null,
       pollingInterval: null,
-      isLoading: true // Add a loading state
+      isLoading: true, // Add a loading state
+      VisaStatusDialog:false,
     };
   },
 

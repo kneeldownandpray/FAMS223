@@ -79,7 +79,7 @@
               </q-table>
               <div class="q-mt-sm">
                 <q-btn  @click="showDialog(entry)" label="Resume" color="secondary" class="q-mr-sm"/>
-                <q-btn v-if="currentTab === 'hired'" @click="confirmUnlink(entry)" label="Unlink Permanently" color="negative"/>
+                <q-btn v-if="currentTab === 'hired'" @click="confirmUnlink(entry)" label="Remove this Applicant" color="negative"/>
               </div>
             </div>
           </q-slide-transition>
