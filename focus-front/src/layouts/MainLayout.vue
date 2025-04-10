@@ -105,7 +105,7 @@
             <q-item-label>Videos</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item v-if="user?.account_type === 6" @click="this.VisaStatusDialog = true" active-class="q-item-no-link-highlighting" style="cursor: pointer;">
+        <q-item v-if="user?.account_type === 6"  @click="this.VisaStatusDialog = true" active-class="q-item-no-link-highlighting" style="cursor: pointer;">
           <q-item-section avatar @click="this.VisaStatusDialog = true"  >
             <q-icon name="fa-solid fa-plane" size="20px" />
           </q-item-section>
@@ -145,13 +145,26 @@
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
-      <router-view />
-    </q-page-container>
-    <q-dialog v-model="VisaStatusDialog">
-      <q-card class="q-pa-xl">   
-            <VisaStatus />
-      </q-card>
-    </q-dialog>
+    <router-view />
+  </q-page-container>
+
+  <q-dialog v-model="VisaStatusDialog">
+    <q-card class="q-pa-lg">
+      <q-btn 
+  label="Exit" 
+  color="negative" 
+  @click="VisaStatusDialog = false" 
+  style="width: 70px;"
+  class="q-mt-sm"
+  rounded
+/>
+      <!-- VisaStatus content goes here -->
+      <VisaStatus class="q-mt-lg" />
+
+      <!-- Exit button -->
+
+    </q-card>
+  </q-dialog>
 
 
 

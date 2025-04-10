@@ -56,10 +56,10 @@ export default {
       currentStep: 4, // Set this value from 1 to 8
       dialogVisible: false, // Controls visibility of the dialog
       selectedStep: null, // Stores the step details for the dialog
-      showSkillAssessment: false, // Toggle visibility for 'Skill Assessment' step
+      showSkillAssessment: true, // Toggle visibility for 'Skill Assessment' step
       steps: [
         { 
-          label: 'Application Submitted', 
+          label: 'Application Recieved', 
           icon: 'fa-solid fa-file-alt',
           details: 'Details about the application submission will go here. This step indicates that the application has been submitted and is awaiting review.'
         },
