@@ -16,6 +16,8 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\CertificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserRequirementController;
+
 
 
 // Middleware-protected route to fetch the authenticated user's details
@@ -47,7 +49,10 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
 // Account Management Routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/upload-profile-picture', [ProfileController::class, 'uploadProfilePicture']);
-
+    Route::post('/user-requirements', [UserRequirementController::class, 'store']);
+    Route::get('/user-requirements/{id}/download', [UserRequirementController::class, 'download']);
+    Route::get('/display/requirements', [UserRequirementController::class, 'getAllRequirementTypes']);
+   
 //Admin api
     Route::post('register', [AuthController::class, 'register']); 
     Route::get('/counter/status-one', [CounterController::class, 'countStatusOne']);

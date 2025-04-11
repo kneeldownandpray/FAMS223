@@ -60,6 +60,11 @@ public function applicantHired()
 {
     return $this->hasMany(Hired::class, 'applicant_id', 'id');
 }
+public function requirements()
+{
+    return $this->hasMany(UserRequirement::class);
+}
+
 
     
 }
