@@ -12,8 +12,9 @@
         class="q-mb-md"
       >
         <!-- Conditionally render 'Skill Assessment' step based on the toggle state -->
-        <div v-if="index !== 2 || showSkillAssessment" class="step-container" @click="openDialog(step)">
+        <div v-if="index !== 3 || showSkillAssessment" class="step-container" @click="openDialog(step)">
           <div class="q-mb-xs" :style="{ backgroundColor: getStepColor(index) }">
+          
             <q-icon
               :name="step.icon"
               size="lg"
@@ -69,8 +70,15 @@ export default {
         { 
           label: 'Interview & Employer Confirmation', 
           icon: 'fa-solid fa-user-check',
-          details: 'This step involves scheduling and attending an interview. After the interview, employer confirmation is needed before proceeding to the next step.' 
+          details: 'This step involves scheduling and attending an interview. After the interview, employer confirmation is needed before proceeding to the next step.',
+          btn:false, 
         },
+        {
+          label: 'Requirements',
+          icon: 'fa-solid fa-folder-open',
+          details: 'This step includes gathering necessary requirements such as documents, certifications, and any other employer- or agency-specified prerequisites before proceeding to the skill assessment.'
+        },
+
         {
           label: 'Skill Assessment', 
           icon: 'fa-solid fa-cogs', 

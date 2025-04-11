@@ -390,7 +390,10 @@ export default {
         } else {
           this.resume = response.data;
         }
-        this.getresumeLink(this.resume.user.profile_picture);
+        if(this.resume.user.profile_picture){
+          this.getresumeLink(this.resume.user.profile_picture);
+        }
+        
       } catch (error) {
         console.error('Error fetching resume:', error);
         this.resume = false;

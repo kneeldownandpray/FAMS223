@@ -203,7 +203,7 @@ if (imageExtension === 'jpg' || imageExtension === 'jpeg') {
         ({ page, yOffset } = this.addEducationSectionToPDF(page, "EDUCATIONAL ATTAINMENT:", this.resumeData.education, yOffset, pdfDoc, helveticaBoldFont, helveticaFont));
         ({ page, yOffset } = this.addSectionToPDF(page, "EMPLOYMENT REFERENCES:", this.resumeData.workExperience, yOffset, pdfDoc, helveticaBoldFont, helveticaFont));
         ({ page, yOffset } = this.addSectionToPDF(page, "SKILLS:", this.resumeData.skills, yOffset, pdfDoc, helveticaBoldFont, helveticaFont, true));
-        ({ page, yOffset } = this.addSectionToPDF(page, "CERTIFICATES:", this.resumeData.certificates, yOffset, pdfDoc, helveticaBoldFont, helveticaFont, true));
+        ({ page, yOffset } = this.addSectionToPDF(page, "TRAINING CERT:", this.resumeData.certificates, yOffset, pdfDoc, helveticaBoldFont, helveticaFont, true));
 
         const pdfBytes = await pdfDoc.save();
         saveAs(new Blob([pdfBytes], { type: 'application/pdf' }), 'resume.pdf');

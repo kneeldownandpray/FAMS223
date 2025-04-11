@@ -42,7 +42,7 @@
       <q-card v-for="entry in ListOfApplicants" :key="entry.id" class="my-card cursor-pointer">
         <q-card-section  >
           <div class="q-gutter-md" style="display: flex; justify-content: space-between;">
-            <div>
+            <div style="display: flex;">
               <!-- <q-icon @click="toggleApplicantDetails(entry)" v-if="entry.approval_of_admin == 1"  name="account_circle" size="50px"/>
               <q-icon v-else  name="account_circle" size="50px"/> -->
 

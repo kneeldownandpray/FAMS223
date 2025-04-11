@@ -145,18 +145,20 @@ class AccountController extends Controller
     {
         $user = $request->user();
         $userAccountType = $user->account_type;
-
+    
         $search = $request->input('search');
         $accountType = $request->input('account_type');
         $status = $request->input('status', 2); // Default to status 2 if not provided
         $perPage = $request->input('per_page', 10);
-
+    
+        // Initialize query for Users
         $query = User::query()
             ->leftJoin('account_informations', 'users.id', '=', 'account_informations.user_id')
             ->select('users.*', 'account_informations.skills_assessment', 'account_informations.account_acceptor_id', 'account_informations.account_status')
             ->where('account_informations.account_status', $status)
             ->whereNotNull('account_informations.account_acceptor_id');
-
+    
+        // If $userAccountType is 1, filter by account type
         if ($userAccountType === 1) {
             if ($accountType) {
                 $query->where('users.account_type', $accountType);
@@ -168,7 +170,8 @@ class AccountController extends Controller
                 $query->where('users.account_type', $userAccountType);
             }
         }
-
+    
+        // Search filter (first name, last name, email)
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('users.first_name', 'like', "%{$search}%")
@@ -176,12 +179,40 @@ class AccountController extends Controller
                   ->orWhere('users.email', 'like', "%{$search}%");
             });
         }
-
+    
+        // Filter for profession, visa_status, skill_assessment, and gender
+        $profession = $request->input('profession');
+        $visaStatus = $request->input('visa_status');
+        $skillAssessment = $request->input('skill_assessment');
+        $gender = $request->input('gender');
+    
+        if ($profession) {
+            $query->where('account_informations.profession', 'like', "%{$profession}%");
+        }
+    
+        if ($visaStatus) {
+            $query->where('account_informations.visa_status', 'like', "%{$visaStatus}%");
+        }
+    
+        if ($skillAssessment) {
+            $query->where('account_informations.skills_assessment', 'like', "%{$skillAssessment}%");
+        }
+    
+        if ($gender) {
+            $query->where('users.gender', 'like', "%{$gender}%");
+        }
+    
+        // If $userAccountType is 6, also include the resume data
+        if ($accountType == 6) {
+            $query->with(['resume', 'resume.educationalAttainments', 'resume.workExperiences', 'resume.skills', 'resume.certifications', 'resume.userVideos']);
+        }
+    
+        // Paginate the result
         $users = $query->paginate($perPage);
-
+    
         return response()->json($users);
     }
-
+    
 
 
     public function shortpolling(Request $request)

@@ -348,8 +348,11 @@ export default defineComponent({
       totalPages: 0,
       columns: [
         { name: 'id', label: 'ID', align: 'left', field: 'id', sortable: true },
+        { name: 'last_name', label: 'Last Name', align: 'left', field: 'last_name', sortable: true },
         { name: 'first_name', label: 'First Name', align: 'left', field: 'first_name', sortable: true }, 
         { name: 'middle_name', label: 'Middle Name', align: 'left', field: 'middle_name', sortable: true },
+        { name: 'skills_assessment', label: 'Skills Assessment', align: 'left', field: 'skills_assessment', sortable: true },
+        { name: 'visa_status', label: 'Visa Status', align: 'left', field: 'visa_status', sortable: true },
         { name: 'last_name', label: 'Last Name', align: 'left', field: 'last_name', sortable: true },
         { name: 'email', label: 'Email', align: 'left', field: 'email', sortable: true },
         { name: 'account_type', label: 'Account Type', align: 'left', field: 'account_type', sortable: true },
