@@ -52,13 +52,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user-requirements', [UserRequirementController::class, 'store']);
     Route::get('/user-requirements/{id}/download', [UserRequirementController::class, 'download']);
     Route::get('/display/requirements', [UserRequirementController::class, 'getAllRequirementTypes']);
+    Route::get('/admin/user-requirements/missing/{userId}', [UserRequirementController::class, 'getMissingRequirements']);
     Route::post('/add-requirement-type', [UserRequirementController::class, 'addRequirementType']);
     Route::put('/edit-requirement-type/{id}', [UserRequirementController::class, 'editRequirementType']);
     Route::delete('/delete-requirement-type/{id}', [UserRequirementController::class, 'deleteRequirementType']);
     Route::get('/user-requirements', [UserRequirementController::class, 'getUserResume']);
 
+    Route::get('/admin/requirement-types', [UserRequirementController::class, 'getAllRequirementTypes']);
+
     
-   
+    Route::get('/admin/user-requirements', [UserRequirementController::class, 'adminIndex']);
+    Route::put('/admin/user-requirements/{id}', [UserRequirementController::class, 'adminUpdate']);
 //Admin api
     Route::post('register', [AuthController::class, 'register']); 
     Route::get('/counter/status-one', [CounterController::class, 'countStatusOne']);

@@ -12,10 +12,10 @@
           <div class="text-subtitle1">{{ requirement.name }}</div>
           <div class="text-caption text-grey-7">{{ requirement.description }}</div>
           <div class="text-caption q-mt-xs" v-if="userRequirementsMap && userRequirementsMap[requirement.id] && userRequirementsMap[requirement.id].note">
-  <i style="color: red; font-weight: 600; font-size: 15px;"> 
-    NOTE : {{ userRequirementsMap[requirement.id].note || 'No note available' }}
-  </i>
-</div>
+          <i style="color: red; font-weight: 600; font-size: 15px;"> 
+            NOTE : {{ userRequirementsMap[requirement.id].note || 'No note available' }}
+          </i>
+        </div>
         </q-card-section>
 
         <q-separator />

@@ -29,7 +29,36 @@ class UserRequirementController extends Controller
         ]);
     }
 
+    public function adminIndex(Request $request)
+    {
+        $query = UserRequirement::with('requirementType')->orderBy('created_at', 'desc');
     
+        if ($request->has('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+    
+        $requirements = $query->get();
+    
+        return response()->json($requirements);
+    }
+public function adminUpdate(Request $request, $id)
+{
+    // if (auth()->user()->account_type !== 0) {
+    //     return response()->json(['message' => 'Unauthorized'], 403);
+    // }
+
+    $requirement = UserRequirement::findOrFail($id);
+
+    $validated = $request->validate([
+        'status' => 'nullable|in:processing,accepted,rejected',
+        'note' => 'nullable|string|max:1000',
+    ]);
+
+    $requirement->update($validated);
+
+    return response()->json(['message' => 'Requirement updated successfully.']);
+}
+
 
     public function download($id)
     {
@@ -131,6 +160,24 @@ class UserRequirementController extends Controller
                 ->get();
 
             return response()->json($requirements);
+        }
+    public function getMissingRequirements($userId)
+        {
+            
+            $allTypes = RequirementType::select('id', 'name', 'description')->get();
+
+          
+            $userTypes = UserRequirement::where('user_id', $userId)->pluck('requirement_type_id');
+
+            
+            $missing = $allTypes->filter(function ($type) use ($userTypes) {
+                return !$userTypes->contains($type->id);
+            })->values(); // reset keys
+
+            return response()->json([
+                'user_id' => $userId,
+                'missing_requirements' => $missing
+            ]);
         }
     
 }
