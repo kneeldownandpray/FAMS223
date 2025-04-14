@@ -80,7 +80,7 @@
         <q-card-section class="text-h6">{{ dialog.title }}</q-card-section>
         <q-card-section v-html="dialog.message" />
         <q-card-actions align="right">
-          <q-btn label="OK" color="red" v-close-popup />
+          <q-btn label="OK" color="red" v-close-popup @click="checkifemmit()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -96,7 +96,7 @@ export default {
   data() {
     return {
       requirements: [],
-      UserIdOfWorker: 2,
+      UserIdOfWorker: null,
       token: localStorage.getItem('access_token'),
       apiBaseUrl: import.meta.env.VITE_API_BASE_URL,
       statusOptions: [
@@ -111,11 +111,27 @@ export default {
       }
     }
   },
+  props: {
+    idOfRequirement: {
+      type: null, // or the appropriate type for your data
+      required: true
+    }
+  },
+  
   methods: {
+    async checkifemmit(){
+    //   if(!this.requirements){
+    //   this.$emit('emittest', true);
+    // }
+    if (Array.isArray(this.requirements) && !this.requirements.length > 0) {
+    this.$emit('emittest', true);
+} 
+    // console.log(this.requirements);
+    },
     async fetchRequirements() {
       try {
-        const url = this.UserIdOfWorker
-          ? `${this.apiBaseUrl}/admin/user-requirements?user_id=${this.UserIdOfWorker}`
+        const url = this.idOfRequirement
+          ? `${this.apiBaseUrl}/admin/user-requirements?user_id=${this.idOfRequirement}`
           : `${this.apiBaseUrl}/admin/user-requirements`
 
         const response = await axios.get(url, {
@@ -204,7 +220,7 @@ export default {
 .requirement-card {
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-  width: 23%;
+  width: 48%;
 }
 
 @media (max-width: 650px) {

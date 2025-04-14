@@ -49,12 +49,19 @@
               <q-btn
                 flat
                 icon="edit"
+                color="blue"
                 @click="openEditModal(props.row)"
               />
               <q-btn
                 flat
                 icon="lock"
                 @click="openChangePasswordModal(props.row)"
+              />
+              <q-btn
+                color="green"
+                icon="task"
+                flat
+                @click="openRequirementsModal(props.row)"
               />
               <q-btn
                 flat
@@ -232,6 +239,7 @@
 <!-- Change Password Modal -->
     <q-dialog v-model="changePasswordDialog">
       <q-card>
+        
         <q-card-section class="header-format-w">
           <div class="text-h6">Change Password</div>
         </q-card-section>
@@ -271,7 +279,19 @@
       </q-card>
     </q-dialog>
 
-    <!-- Delete Confirmation Dialog -->
+
+
+    <q-dialog v-model="RequirementDialog">
+          <q-card>
+            <q-card-section class="header-format-w">
+          <div class="text-h6">Requirements</div>
+        </q-card-section>
+           <RequirementManager :idOfRequirement="userIDtoManage" @emittest="noRequirement(emittest)"/>
+          </q-card>
+    </q-dialog>
+
+
+ 
     <q-dialog v-model="deleteDialog">
       <q-card>
         <q-card-section class="header-format-w">
@@ -298,11 +318,16 @@
 <script>
 import { defineComponent, ref, computed } from 'vue';
 import axios from 'axios';
+import RequirementManager from 'components/RequirementManager.vue';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export default defineComponent({
   name: 'TableBasic',
+  
+  components: {
+    RequirementManager
+  },
   data() {
     return {
       filter: '',
@@ -313,6 +338,8 @@ export default defineComponent({
       deleteDialog: false,
       changePasswordDialog: false,
       userToChangePassword: null,
+      RequirementDialog: false,
+      userIDtoManage:null,
       showForm: false, // Controls the visibility of the dialog
       registerForm: {
         first_name: '',
@@ -383,6 +410,10 @@ export default defineComponent({
     }
   },
   methods: {
+    async noRequirement(emittest){
+    
+      this.RequirementDialog = false;
+    },
 
     async registerUser() {
   this.loading = true;
@@ -485,6 +516,13 @@ export default defineComponent({
       this.passwordForm.new_password_confirmation = null;
       this.userToChangePassword = user;
       this.changePasswordDialog = true;
+    },
+
+    openRequirementsModal(user){
+     
+      this.RequirementDialog = true;
+      this.userIDtoManage = user.id;
+      console.log(this.userIDtoManage);
     },
     async changePassword() {
       try {
