@@ -256,6 +256,15 @@
             <q-item-label>Hired Applicants</q-item-label>
           </q-item-section>
         </q-item>
+  
+        <q-item to="/RequirementSetup" active-class="q-item-no-link-highlighting">
+          <q-item-section avatar>
+            <q-icon name="list_alt" size="md"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label >Requirement Settings</q-item-label>
+          </q-item-section>
+        </q-item>
 
         <!-- <q-item to="/TreeTable" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>

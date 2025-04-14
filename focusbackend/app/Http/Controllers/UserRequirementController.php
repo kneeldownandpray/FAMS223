@@ -28,23 +28,24 @@ class UserRequirementController extends Controller
             'requirement' => $requirement,
         ]);
     }
-        public function getAllRequirementTypes()
-        {
-            $types = RequirementType::select('name', 'description')->get();
-            return response()->json($types); // for API
-        }
+
+    
+
     public function download($id)
     {
-        // Check if account_type is 1, 2, 3, or 4
-        if (in_array(auth()->user()->account_type, [1, 2, 3, 4])) {
-            $requirement = UserRequirement::where('id', $id)
-                ->where('user_id', auth()->id()) // para secured, sariling files lang pwede
-                ->firstOrFail();
-        
-            return Storage::disk('private')->download($requirement->file_path, $requirement->original_name);
-        } else {
-            return response("You are not authorized to Download", 403); // Returning a 403 Forbidden response
-        }
+        $requirement = UserRequirement::where('id', $id)
+        ->where('user_id', auth()->id())
+        ->firstOrFail();
+
+        $path = storage_path("app/private/{$requirement->file_path}");
+
+        // Get the correct mime type
+        $mimeType = Storage::disk('private')->mimeType($requirement->file_path);
+
+        return response()->download($path, $requirement->original_name, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'attachment; filename="' . $requirement->original_name . '"',
+        ]);
     }
     public function addRequirementType(Request $request)
     {
@@ -67,15 +68,69 @@ class UserRequirementController extends Controller
             'requirement_type' => $requirementType,
         ], 201);  // HTTP Status code 201 - Created
     }
-    
-//{
-//     "id": 1,
-//     "user_id": 1,
-//     "requirement_type_id": 1,
-//     "file_path": "user_requirements/1/TzWgODVctCBUuA14UkWIfuGNWW88d9HDrXhGT4jt.docx",
-//     "original_name": "Joseph Daily Work Report april 8 2025.docx",
-//     "created_at": "2025-04-11T03:17:21.000000Z",
-//     "updated_at": "2025-04-11T03:17:21.000000Z"
-// }
+
+
+    // Get All Requirement Types (existing method)
+    public function getAllRequirementTypes()
+    {
+        $types = RequirementType::select('id', 'name', 'description')->get();
+        return response()->json($types);
+    }
+
+    // Edit Requirement Type
+    public function editRequirementType(Request $request, $id)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'name' => 'required|string|max:255|unique:requirement_types,name,' . $id,
+            'description' => 'nullable|string|max:1000',
+        ]);
+
+        $requirementType = RequirementType::find($id);
+
+        if (!$requirementType) {
+            return response()->json(['message' => 'Requirement type not found.'], 404);
+        }
+
+        // Update the requirement type
+        $requirementType->update([
+            'name' => $request->name,
+            'description' => $request->description,
+        ]);
+
+        // Return a success response
+        return response()->json([
+            'message' => 'Requirement type updated successfully!',
+            'requirement_type' => $requirementType,
+        ]);
+    }
+
+    // Delete Requirement Type
+    public function deleteRequirementType($id)
+    {
+        $requirementType = RequirementType::find($id);
+
+        if (!$requirementType) {
+            return response()->json(['message' => 'Requirement type not found.'], 404);
+        }
+
+        // Delete the requirement type
+        $requirementType->delete();
+
+        // Return a success response
+        return response()->json(['message' => 'Requirement type deleted successfully.']);
+    }
+
+    public function getUserResume()
+        {
+            $userId = auth()->id();
+
+            $requirements = UserRequirement::with('requirementType')
+                ->where('user_id', $userId)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return response()->json($requirements);
+        }
     
 }

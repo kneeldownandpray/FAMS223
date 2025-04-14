@@ -9,7 +9,7 @@ class UserRequirement extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'requirement_type_id', 'file_path', 'original_name'];
+    protected $fillable = ['user_id', 'requirement_type_id', 'file_path', 'original_name','status','note'];
 
     public function user()
     {

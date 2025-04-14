@@ -89,6 +89,7 @@
             <q-item-label>Resume</q-item-label>
           </q-item-section>
         </q-item>
+        
         <q-item v-if="user?.account_type === 6" to="/applicant/AddVideo" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="add" />
@@ -105,6 +106,15 @@
             <q-item-label>Videos</q-item-label>
           </q-item-section>
         </q-item>
+
+        <q-item v-if="user?.account_type === 6" to="/applicant/requirements" active-class="q-item-no-link-highlighting">
+          <q-item-section avatar>
+            <q-icon name="task" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Requirement</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item v-if="user?.account_type === 6"  @click="this.VisaStatusDialog = true" active-class="q-item-no-link-highlighting" style="cursor: pointer;">
           <q-item-section avatar @click="this.VisaStatusDialog = true"  >
             <q-icon name="fa-solid fa-plane" size="20px" />
@@ -113,7 +123,7 @@
             <q-item-label >Visa Status</q-item-label>
           </q-item-section>
         </q-item>
-
+        
         <q-item v-if="user?.account_type === 5" to="/employer/profile" active-class="q-item-no-link-highlighting">
        <q-item-section avatar>
          <q-icon name="account_circle" />

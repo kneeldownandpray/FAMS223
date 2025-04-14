@@ -67,6 +67,7 @@ const routes = [
       { path: '/applicant/Resume', component: () => import('pages/applicant/DisplayResume.vue'), meta: { requiresAuth: true } },
       { path: '/applicant/AddVideo', component: () => import('pages/applicant/SubmitVideo.vue'), meta: { requiresAuth: true } },
       { path: '/applicant/videos', component: () => import('pages/applicant/VideoList.vue'), meta: { requiresAuth: true } },
+      { path: '/applicant/requirements', component: () => import('pages/applicant/UploadRequirements.vue'), meta: { requiresAuth: true } },
       
 
       // Employer routes (for users with account_status 5)
