@@ -284,7 +284,10 @@
     <q-dialog v-model="RequirementDialog">
           <q-card>
             <q-card-section class="header-format-w">
-          <div class="text-h6">Requirements</div>
+              <div class="flex" style="justify-content: space-between;">
+              <div class="text-h6">Requirements</div> 
+              <q-btn icon="close" flat @click="this.RequirementDialog = false"  />
+            </div>
         </q-card-section>
            <RequirementManager :idOfRequirement="userIDtoManage" @emittest="noRequirement(emittest)"/>
           </q-card>
