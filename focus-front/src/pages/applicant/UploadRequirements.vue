@@ -89,6 +89,45 @@ export default {
     },
   },
   methods: {
+
+    async downloadFile(userRequirementId) {
+  try {
+    const response = await axios.get(
+      `${this.apiBaseUrl}/user-requirements/${userRequirementId}/download`,
+      {
+        headers: { Authorization: `Bearer ${this.token}` },
+        responseType: 'blob',
+      }
+    );
+
+    // 🕵️ Get filename from headers
+    const disposition = response.headers['content-disposition'];
+    let fileName = 'downloaded_file';
+    if (disposition && disposition.includes('filename=')) {
+      fileName = disposition
+        .split('filename=')[1]
+        .replace(/["']/g, '')
+        .trim();
+    }
+
+    // ✅ Create blob with correct MIME type
+    const blob = new Blob([response.data], { type: response.headers['content-type'] });
+
+    // 💾 Create link and trigger download
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Download error:', error);
+    this.$q.notify({ type: 'negative', message: 'Download failed!' });
+  }
+},
+
     getStatusColor(status) {
     if (status === 'processing') return 'yellow';
     if (status === 'accepted') return 'green';
