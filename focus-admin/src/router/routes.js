@@ -32,8 +32,7 @@ const routes = [
       { path: '/Footer', component: () => import('pages/Footer.vue'), meta: { requiresAuth: true } },
       { path: '/CardHeader', component: () => import('pages/CardHeader.vue'), meta: { requiresAuth: true } },
       { path: '/RequirementSetup', component: () => import('pages/RequirementSetup.vue'), meta: { requiresAuth: true } },
-
-      
+      { path: '/WorkerVisaManagement', component: () => import('pages/workerVisaApplication.vue'), meta: { requiresAuth: true } },
       // Add other routes as needed...
     ]
   },

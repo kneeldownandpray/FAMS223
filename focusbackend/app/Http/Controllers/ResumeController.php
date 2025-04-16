@@ -8,6 +8,7 @@ use App\Models\UserVideo; // Import the UserVideo model
 use App\Models\Skill; // Import the Skill model
 use App\Models\Certification; // Import the Certification model
 use App\Models\WorkExperience; // Import the WorkExperience model
+use App\Models\VisaStatus;
 use Illuminate\Http\Request;
 
 class ResumeController extends Controller
@@ -38,12 +39,12 @@ class ResumeController extends Controller
 
     public function store(Request $request)
     {
-        // Validate incoming data
+        // Validation...
         $data = $request->validate([
             'full_name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'birth_address' => 'required|string|max:255',
-            'height' => 'nullable|numeric', // Accepts decimal values
+            'height' => 'nullable|numeric',
             'weight' => 'nullable|integer',
             'objectives' => 'nullable|string',
             'civil_status' => 'nullable|string',
@@ -53,23 +54,25 @@ class ResumeController extends Controller
             'contact_no' => 'nullable|string',
         ]);
 
-        // Get the authenticated user's ID
         $userId = auth()->id();
 
-        // Check if a resume already exists for the user
         $existingResume = Resume::where('user_id', $userId)->first();
-
         if ($existingResume) {
             return response()->json(['message' => 'Resume already exists.'], 400);
         }
 
-        // Create a new resume with the validated data
         if (auth()->user()->account_type == 6) {
             $data['user_id'] = $userId;
             $resume = Resume::create($data);
 
-            // Handle skills and certifications after creating the resume
+            // Handle skills and certifications
             $this->storeSkillsAndCertifications($request, $resume);
+
+            // ✅ Create visa status entry
+            VisaStatus::create([
+                'user_id' => $userId,
+                'application_received' => 1,
+            ]);
 
             return response()->json($resume, 201);
         }

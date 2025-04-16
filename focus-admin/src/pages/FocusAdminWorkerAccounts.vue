@@ -1,8 +1,9 @@
 <template>
   <q-page padding>
     <q-card class="no-shadow" bordered>
-      <q-card-section class="header-format-w">
-        <div class="text-h6 "> <q-icon name="work" size="25px" class="q-mr-sm"/>Focus Admin</div>
+      <q-card-section class="text-h6 row items-center">
+        <q-icon name="work" class="q-mr-sm" />
+        Worker Account
       </q-card-section>
       <q-separator></q-separator>
       <q-card-section class="q-pa-none">

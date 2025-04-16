@@ -1,8 +1,9 @@
 <template>
   <q-page padding>
     <q-card class="no-shadow" bordered>
-      <q-card-section class="header-format-w">
-        <div class="text-h6 "> <q-icon name="account_balance_wallet" size="25px" class="q-mr-sm"/>Lending </div>
+      <q-card-section class="text-h6 row items-center">
+        <q-icon name="account_balance_wallet" class="q-mr-sm" />
+        Lending
       </q-card-section>
       <q-separator></q-separator>
       <q-card-section class="q-pa-none">

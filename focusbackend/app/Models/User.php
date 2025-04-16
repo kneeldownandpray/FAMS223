@@ -65,6 +65,9 @@ public function requirements()
     return $this->hasMany(UserRequirement::class);
 }
 
-
+public function visaStatus()
+{
+    return $this->hasOne(VisaStatus::class, 'user_id');
+}
     
 }

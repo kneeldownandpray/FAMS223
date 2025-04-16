@@ -17,6 +17,8 @@ use App\Http\Controllers\SkillController;
 use App\Http\Controllers\CertificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserRequirementController;
+use App\Http\Controllers\VisaStatusController;
+
 
 
 
@@ -58,12 +60,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/delete-requirement-type/{id}', [UserRequirementController::class, 'deleteRequirementType']);
     Route::get('/user-requirements', [UserRequirementController::class, 'getUserResume']);
 
-    Route::get('/admin/requirement-types', [UserRequirementController::class, 'getAllRequirementTypes']);
 
-    
+    //Admin api
+    Route::get('/admin/requirement-types', [UserRequirementController::class, 'getAllRequirementTypes']);
     Route::get('/admin/user-requirements', [UserRequirementController::class, 'adminIndex']);
     Route::put('/admin/user-requirements/{id}', [UserRequirementController::class, 'adminUpdate']);
-//Admin api
+
+    Route::get('/visa-statuses', [VisaStatusController::class, 'index']);
+    // Route::put('/visa-statuses/{userId}', [VisaStatusController::class, 'update']);
+    Route::put('/visa-statuses/{workerId}', [VisaStatusController::class, 'update']);
+
+
     Route::post('register', [AuthController::class, 'register']); 
     Route::get('/counter/status-one', [CounterController::class, 'countStatusOne']);
     Route::post('acceptAccount', [AccountController::class, 'accountValidatorAcceptor']);

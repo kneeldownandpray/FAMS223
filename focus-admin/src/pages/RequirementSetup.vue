@@ -45,7 +45,7 @@
     <!-- Display Requirement Types Table -->
     <q-card>
       <q-card-section class="flex" style="justify-content: space-between">
-        <div class="text-h6">Existing Requirement Types</div> 
+        <div class="text-h6"></div> 
         <q-btn
         icon="add"
       label="Add Requirement" 

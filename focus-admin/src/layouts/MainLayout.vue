@@ -88,7 +88,7 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-      class="bg-primary text-white"
+      class="bg-dark text-white"
     >
       <q-list>
 
@@ -265,7 +265,16 @@
             <q-item-label >Requirement Settings</q-item-label>
           </q-item-section>
         </q-item>
-
+  
+        <q-item to="/WorkerVisaManagement" active-class="q-item-no-link-highlighting">
+          <q-item-section avatar>
+            <q-icon name="fact_check" size="md"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label >Worker Visa App. Management</q-item-label>
+          </q-item-section>
+        </q-item>
+        
         <!-- <q-item to="/TreeTable" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list"/>
