@@ -70,6 +70,7 @@ class VisaStatusController extends Controller
             'profession' => optional($user->resume)->profession,
             'employer_name' => $hired->employer->first_name . ' ' . $hired->employer->last_name,
             'visa_status' => [
+                'visa_id' => $user->visaStatus->id,
                 'application_received' => $user->visaStatus->application_received,
                 'interview_employer_confirmation' => $user->visaStatus->interview_employer_confirmation,
                 'requirements' => $user->visaStatus->requirements,

@@ -66,7 +66,7 @@
                 label="Done Transaction"
                 color="green"
                 size="sm"
-                @click="handleDoneTransaction(props.row.worker_id, true)"
+                @click="handleDoneTransaction(props.row.worker_id, true, props.row)"
                 class="q-mr-sm"
               />
 
@@ -74,7 +74,7 @@
                 label="Reject"
                 color="red"
                 size="sm"
-                @click="handleDoneTransaction(props.row.worker_id, false)"
+                @click="handleDoneTransaction(props.row.worker_id, false, props.row)"
               />
             </q-td>
           </template>
@@ -220,27 +220,31 @@ export default {
     }
   },
   methods: {
-    async handleDoneTransaction(workerId ,transaction) {
-      console.log(workerId,transaction);
-  // try {
-  //   const token = localStorage.getItem('access_token');
-  //   await axios.post(`${apiBaseUrl}/visa-statuses/${workerId}/done`, {}, {
-  //     headers: {
-  //       Authorization: `Bearer ${token}`
-  //     }
-  //   });
-  //   this.$q.notify({
-  //     type: 'positive',
-  //     message: 'Transaction marked as done!'
-  //   });
-  //   this.fetchVisaStatuses(); // refresh list
-  // } catch (error) {
-  //   console.error('Error marking transaction as done:', error);
-  //   this.$q.notify({
-  //     type: 'negative',
-  //     message: 'Something went wrong.'
-  //   });
-  // }
+    async handleDoneTransaction(workerId, status,transaction) {
+  console.log(workerId, status,transaction);
+  try {
+    const token = localStorage.getItem('access_token');
+    const payload = {
+      user_id: transaction.user_id,
+      employer_id: transaction.employer_id,
+      visa_status_id: transaction.visa_status_id,
+      approved_by: transaction.approved_by,
+      profession: transaction.profession,
+      step: transaction.step,
+      status: transaction.status,
+      completed_at: transaction.completed_at
+    };
+
+    await axios.post(`${apiBaseUrl}/visa-status-history`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    this.fetchVisaStatuses(); // refresh list
+  } catch (error) {
+    console.error('Error marking transaction as done:', error);
+  }
 },
     async fetchVisaStatuses() {
       this.loading = true;
