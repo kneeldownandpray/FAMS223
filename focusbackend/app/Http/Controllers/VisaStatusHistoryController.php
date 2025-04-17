@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\VisaStatusHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class VisaStatusHistoryController extends Controller
 {
@@ -26,7 +27,16 @@ class VisaStatusHistoryController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate incoming request
+        $user = Auth::user();
+    
+        // Append approved_by and default step
+        $request->merge([
+            'approved_by' => $user->id,
+            'step' => 'initiated', // or any default value you'd like
+            'completed_at' => now()
+        ]);
+    
+        // Validate request
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
             'employer_id' => 'required|exists:users,id',
@@ -37,20 +47,18 @@ class VisaStatusHistoryController extends Controller
             'status' => 'required|integer',
             'completed_at' => 'nullable|date',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 400);
         }
-
-        // Create a new VisaStatusHistory record
+    
         $visaStatusHistory = VisaStatusHistory::create($request->all());
-
+    
         return response()->json([
             'message' => 'Visa Status History created successfully',
             'data' => $visaStatusHistory
         ], 201);
     }
-
     /**
      * Display the specified Visa Status History record.
      */
