@@ -67,7 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/admin/user-requirements/{id}', [UserRequirementController::class, 'adminUpdate']);
 
     Route::get('/visa-statuses', [VisaStatusController::class, 'index']);
-    // Route::put('/visa-statuses/{userId}', [VisaStatusController::class, 'update']);
+    Route::get('/visa-progress', [VisaStatusController::class, 'getProgress']);
     Route::put('/visa-statuses/{workerId}', [VisaStatusController::class, 'update']);
 
 

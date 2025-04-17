@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Resume;
-use App\Models\UserVideo;
 use App\Models\Skill;
 use App\Models\Certification;
 use App\Models\Hired;
 use App\Models\VisaStatus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VisaStatusController extends Controller
 {
@@ -128,5 +127,57 @@ class VisaStatusController extends Controller
 
     return response()->json(['message' => 'Visa status updated successfully']);
 }
+
+public function getProgress()
+{
+    $user2 = Auth::user();
+    $user = User::with('visaStatus')->findOrFail($user2->id);
+
+    $visaStatus = $user->visaStatus;
+
+    if (!$visaStatus) {
+        return response()->json(['message' => 'Visa status not found'], 404);
+    }
+
+    // Define the visa status steps
+    $steps = [
+        'application_received',
+        'interview_employer_confirmation',
+        'requirements',
+        'skill_assessment',
+        'visa_preparation',
+        'visa_lodged',
+        'medical_biometrics',
+        'awaiting_decision',
+        'visa_outcome',
+        'ready_to_fly',
+    ];
+
+    $progressCount = 0;
+
+    foreach ($steps as $step) {
+        $value = $visaStatus->$step;
+
+        if ($value === 1) {
+            // Count if it's 1
+            $progressCount++;
+        } elseif ($value === 3) {
+            // Count if it's 3 
+            $progressCount++;
+          // Stop counting after encountering 3
+        } else {
+            // Stop counting if it's 0
+            break;
+        }
+    }
+
+    return response()->json([
+        'user_id' => $user->id,
+        'applicant_name' => $user->first_name . ' ' . $user->last_name,
+        'visa_progress' => $progressCount,
+        
+    ]);
+}
+
 
 }

@@ -56,6 +56,18 @@
               <template v-else>
                 <span>None</span>
               </template>
+
+              
+            </q-td>
+          </template>
+          <template v-slot:body-cell-actions="props">
+            <q-td :props="props" class="text-center">
+              <q-btn
+                label="Done Transaction"
+                color="green"
+                size="sm"
+                @click="handleDoneTransaction(props.row.worker_id)"
+              />
             </q-td>
           </template>
         </q-table>
@@ -158,27 +170,34 @@ export default {
   },
   computed: {
     columns() {
-      return [
-        {
-          name: 'applicant_employer',
-          label: 'Name (Employer)',
-          field: row => `${row.applicant_name} (${row.employer_name})`,
-          align: 'left'
-        },
-        {
-          name: 'profession',
-          label: 'Profession',
-          field: 'profession',
-          align: 'left'
-        },
-        ...this.visaStatusKeys.map(key => ({
-          name: key,
-          label: this.formatLabel(key),
-          field: row => row.visa_status[key],
-          align: 'center'
-        }))
-      ];
+  return [
+    {
+      name: 'applicant_employer',
+      label: 'Name (Employer)',
+      field: row => `${row.applicant_name} (${row.employer_name})`,
+      align: 'left'
     },
+    {
+      name: 'profession',
+      label: 'Profession',
+      field: 'profession',
+      align: 'left'
+    },
+    ...this.visaStatusKeys.map(key => ({
+      name: key,
+      label: this.formatLabel(key),
+      field: row => row.visa_status[key],
+      align: 'center'
+    })),
+    {
+      name: 'actions',
+      label: 'Actions',
+      field: 'worker_id',
+      align: 'center'
+    }
+  ];
+},
+
     filteredVisaStatusList() {
       if (!this.filter) return this.visaStatusList;
 
@@ -193,6 +212,28 @@ export default {
     }
   },
   methods: {
+    async handleDoneTransaction(workerId) {
+      console.log(workerId);
+  // try {
+  //   const token = localStorage.getItem('access_token');
+  //   await axios.post(`${apiBaseUrl}/visa-statuses/${workerId}/done`, {}, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`
+  //     }
+  //   });
+  //   this.$q.notify({
+  //     type: 'positive',
+  //     message: 'Transaction marked as done!'
+  //   });
+  //   this.fetchVisaStatuses(); // refresh list
+  // } catch (error) {
+  //   console.error('Error marking transaction as done:', error);
+  //   this.$q.notify({
+  //     type: 'negative',
+  //     message: 'Something went wrong.'
+  //   });
+  // }
+},
     async fetchVisaStatuses() {
       this.loading = true;
       try {
@@ -264,188 +305,3 @@ export default {
 </script>
 
 
-
-<!-- 
-
-<template>
-  <q-page padding>
-    <q-card>
-      <q-card-section>
-        <div class="text-h6">Visa Status Management</div>
-      </q-card-section>
-
-      <q-card-section>
-
-
-        <div class="row q-col-gutter-md">
-          <q-input filled v-model="filters.name" label="Search Name" class="col-12 col-md-4" />
-          <q-input filled v-model="filters.profession" label="Search Profession" class="col-12 col-md-4" />
-          <q-select
-            filled
-            v-model="filters.visa_step"
-            :options="visaSteps"
-            label="Filter by Visa Step"
-            emit-value
-            map-options
-            clearable
-            class="col-12 col-md-4"
-          />
-          <q-btn label="Search" color="primary" class="q-mt-md" @click="fetchVisaStatuses" />
-        </div>
-
-     
-        <q-table
-          :rows="visaStatuses"
-          :columns="columns"
-          row-key="applicant_name"
-          :loading="loading"
-          class="q-mt-lg"
-        >
-          <template v-slot:body-cell="props">
-            <q-td :props="props">
-              <span v-if="typeof props.value === 'boolean'">
-                <q-icon :name="props.value ? 'check' : 'close'" :color="props.value ? 'green' : 'red'" />
-              </span>
-              <span v-else>{{ props.value }}</span>
-            </q-td>
-          </template>
-
-          <template v-slot:body-cell-action="props">
-            <q-td :props="props">
-              <q-btn
-                color="green"
-                size="sm"
-                icon="check"
-                @click="confirmApproval(props.row)"
-              />
-            </q-td>
-          </template>
-        </q-table>
-      </q-card-section>
-    </q-card>
-
-
-    <q-dialog v-model="dialog.visible">
-      <q-card>
-        <q-card-section class="text-h6">
-          {{ dialog.title }}
-        </q-card-section>
-
-        <q-card-section>
-          {{ dialog.message }}
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="Cancel" v-close-popup />
-          <q-btn flat label="Approve" color="primary" @click="approveStatus(dialog.row)" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-  </q-page>
-</template>
-
-<script setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
-import { useQuasar } from 'quasar'
-
-const $q = useQuasar()
-
-const visaStatuses = ref([])
-const loading = ref(false)
-const token = localStorage.getItem('access_token')
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
-
-const filters = ref({
-  name: '',
-  profession: '',
-  visa_step: ''
-})
-
-const visaSteps = [
-  { label: 'Application Received', value: 'application_received' },
-  { label: 'Interview Employer Confirmation', value: 'interview_employer_confirmation' },
-  { label: 'Requirements', value: 'requirements' },
-  { label: 'Skill Assessment', value: 'skill_assessment' },
-  { label: 'Visa Preparation', value: 'visa_preparation' },
-  { label: 'Visa Lodged', value: 'visa_lodged' },
-  { label: 'Medical Biometrics', value: 'medical_biometrics' },
-  { label: 'Awaiting Decision', value: 'awaiting_decision' },
-  { label: 'Visa Outcome', value: 'visa_outcome' },
-  { label: 'Ready To Fly', value: 'ready_to_fly' },
-]
-
-const columns = [
-  { name: 'employer_name', label: 'Name (Employer)', field: 'employer_name', align: 'left' },
-  { name: 'profession', label: 'Profession', field: 'profession', align: 'left' },
-  { name: 'application_received', label: 'Application Received', field: row => row.visa_status.application_received, align: 'center' },
-  { name: 'interview_employer_confirmation', label: 'Interview Employer Confirmation', field: row => row.visa_status.interview_employer_confirmation, align: 'center' },
-  { name: 'requirements', label: 'Requirements', field: row => row.visa_status.requirements, align: 'center' },
-  { name: 'skill_assessment', label: 'Skill Assessment', field: row => row.visa_status.skill_assessment, align: 'center' },
-  { name: 'visa_preparation', label: 'Visa Preparation', field: row => row.visa_status.visa_preparation, align: 'center' },
-  { name: 'visa_lodged', label: 'Visa Lodged', field: row => row.visa_status.visa_lodged, align: 'center' },
-  { name: 'medical_biometrics', label: 'Medical Biometrics', field: row => row.visa_status.medical_biometrics, align: 'center' },
-  { name: 'awaiting_decision', label: 'Awaiting Decision', field: row => row.visa_status.awaiting_decision, align: 'center' },
-  { name: 'visa_outcome', label: 'Visa Outcome', field: row => row.visa_status.visa_outcome, align: 'center' },
-  { name: 'ready_to_fly', label: 'Ready To Fly', field: row => row.visa_status.ready_to_fly, align: 'center' },
-  { name: 'action', label: 'Action', field: 'action', align: 'center' }
-]
-
-const dialog = ref({
-  visible: false,
-  title: '',
-  message: '',
-  row: null
-})
-
-function confirmApproval(row) {
-  dialog.value = {
-    visible: true,
-    title: 'Approve Visa Step',
-    message: `Are you sure you want to approve the next visa step for ${row.applicant_name}?`,
-    row
-  }
-}
-
-async function approveStatus(row) {
-  dialog.value.visible = false
-  try {
-    await axios.post(`${apiBaseUrl}/visa-statuses/${row.worker_id}/approve`, {}, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    $q.notify({ type: 'positive', message: 'Visa step approved successfully!' })
-    fetchVisaStatuses()
-  } catch (error) {
-    console.error(error)
-    $q.notify({ type: 'negative', message: 'Failed to approve visa step.' })
-  }
-}
-
-async function fetchVisaStatuses() {
-  loading.value = true
-  try {
-    const response = await axios.get(`${apiBaseUrl}/visa-statuses`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-      params: {
-        name: filters.value.name,
-        profession: filters.value.profession,
-        visa_step: filters.value.visa_step
-      }
-    })
-    visaStatuses.value = response.data.data
-  } catch (error) {
-    console.error(error)
-    $q.notify({ type: 'negative', message: 'Failed to fetch visa statuses.' })
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  fetchVisaStatuses()
-})
-</script> -->
