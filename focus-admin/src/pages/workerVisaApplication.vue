@@ -66,7 +66,7 @@
                 label="Done Transaction"
                 color="green"
                 size="sm"
-                @click="handleDoneTransaction(props.row.worker_id, true, props.row)"
+                @click="handleDoneTransaction(props.row.worker_id, 1, props.row)"
                 class="q-mr-sm"
               />
 
@@ -74,7 +74,7 @@
                 label="Reject"
                 color="red"
                 size="sm"
-                @click="handleDoneTransaction(props.row.worker_id, false, props.row)"
+                @click="handleDoneTransaction(props.row.worker_id, 0, props.row)"
               />
             </q-td>
           </template>
@@ -224,15 +224,13 @@ export default {
   console.log(workerId, status,transaction);
   try {
     const token = localStorage.getItem('access_token');
+    
     const payload = {
-      user_id: transaction.user_id,
+      user_id: transaction.worker_id,
       employer_id: transaction.employer_id,
-      visa_status_id: transaction.visa_status_id,
-      approved_by: transaction.approved_by,
+      visa_status_id: transaction.visa_status.visa_id,
       profession: transaction.profession,
-      step: transaction.step,
-      status: transaction.status,
-      completed_at: transaction.completed_at
+      status:status,
     };
 
     await axios.post(`${apiBaseUrl}/visa-status-history`, payload, {
@@ -241,7 +239,7 @@ export default {
       }
     });
 
-    this.fetchVisaStatuses(); // refresh list
+    // this.fetchVisaStatuses(); // refresh list
   } catch (error) {
     console.error('Error marking transaction as done:', error);
   }
