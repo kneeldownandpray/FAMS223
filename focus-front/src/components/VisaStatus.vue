@@ -60,6 +60,7 @@ export default {
       dialogVisible: false, // Controls visibility of the dialog
       selectedStep: null, // Stores the step details for the dialog
       showSkillAssessment: false, // Toggle visibility for 'Skill Assessment' step
+      skillassestment:null,
       user:null,
       steps: [
         { 
@@ -127,14 +128,15 @@ export default {
 
 try {
   const token = localStorage.getItem('access_token_applicant');
-  const response = await axios.get(`${apiBaseUrl}/shortpolling`, {
+  const response = await axios.get(`${apiBaseUrl}/visa-progress`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-
-  this.currentStep = response.data.visa_status;
-  if(response.data.skill_assessment == 0){
+  this.currentStep = response.data.visa_progress + 1;
+  this.skillassestment = response.data.skill_assestment;
+  console.log(this.skillassestment);
+  if(this.skillassestment == 0){
 
     this.showSkillAssessment = false;
 

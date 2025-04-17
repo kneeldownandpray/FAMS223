@@ -175,6 +175,7 @@ public function getProgress()
         'user_id' => $user->id,
         'applicant_name' => $user->first_name . ' ' . $user->last_name,
         'visa_progress' => $progressCount,
+        'skill_assestment' => $user->skill_assessment,
         
     ]);
 }
