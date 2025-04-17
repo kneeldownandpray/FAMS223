@@ -66,7 +66,15 @@
                 label="Done Transaction"
                 color="green"
                 size="sm"
-                @click="handleDoneTransaction(props.row.worker_id)"
+                @click="handleDoneTransaction(props.row.worker_id, true)"
+                class="q-mr-sm"
+              />
+
+              <q-btn
+                label="Reject"
+                color="red"
+                size="sm"
+                @click="handleDoneTransaction(props.row.worker_id, false)"
               />
             </q-td>
           </template>
@@ -212,8 +220,8 @@ export default {
     }
   },
   methods: {
-    async handleDoneTransaction(workerId) {
-      console.log(workerId);
+    async handleDoneTransaction(workerId ,transaction) {
+      console.log(workerId,transaction);
   // try {
   //   const token = localStorage.getItem('access_token');
   //   await axios.post(`${apiBaseUrl}/visa-statuses/${workerId}/done`, {}, {

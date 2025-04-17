@@ -19,9 +19,9 @@ class ResumeController extends Controller
         return Resume::with([
             'user:id,gender,birthday,email,address', 
             'educationalAttainments', 
-            'workExperiences.jobDescriptions', // Include jobDescriptions
-            'skills',  // Add skills relationship
-            'certifications', // Add certifications relationship
+            'workExperiences.jobDescriptions', 
+            'skills', 
+            'certifications',
         ])->get();
     }
 

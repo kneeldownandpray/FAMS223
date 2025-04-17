@@ -18,7 +18,7 @@ use App\Http\Controllers\CertificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserRequirementController;
 use App\Http\Controllers\VisaStatusController;
-
+use App\Http\Controllers\VisaStatusHistoryController;
 
 
 
@@ -65,7 +65,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/requirement-types', [UserRequirementController::class, 'getAllRequirementTypes']);
     Route::get('/admin/user-requirements', [UserRequirementController::class, 'adminIndex']);
     Route::put('/admin/user-requirements/{id}', [UserRequirementController::class, 'adminUpdate']);
-
+    Route::get('/visa-status-history', [VisaStatusHistoryController::class, 'index']);
+    Route::post('/visa-status-history', [VisaStatusHistoryController::class, 'store']);
+    Route::get('/visa-status-history/{id}', [VisaStatusHistoryController::class, 'show']);
+    Route::put('/visa-status-history/{id}', [VisaStatusHistoryController::class, 'update']);
+    Route::delete('/visa-status-history/{id}', [VisaStatusHistoryController::class, 'destroy']);
     Route::get('/visa-statuses', [VisaStatusController::class, 'index']);
     Route::get('/visa-progress', [VisaStatusController::class, 'getProgress']);
     Route::put('/visa-statuses/{workerId}', [VisaStatusController::class, 'update']);
