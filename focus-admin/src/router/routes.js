@@ -33,6 +33,7 @@ const routes = [
       { path: '/CardHeader', component: () => import('pages/CardHeader.vue'), meta: { requiresAuth: true } },
       { path: '/RequirementSetup', component: () => import('pages/RequirementSetup.vue'), meta: { requiresAuth: true } },
       { path: '/WorkerVisaManagement', component: () => import('pages/workerVisaApplication.vue'), meta: { requiresAuth: true } },
+      { path: '/WorkerVisaHistory', component: () => import('pages/workerVisaHistory.vue'), meta: { requiresAuth: true } },
       // Add other routes as needed...
     ]
   },

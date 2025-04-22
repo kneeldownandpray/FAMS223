@@ -21,6 +21,7 @@ class VisaStatus extends Model
         'awaiting_decision',
         'visa_outcome',
         'ready_to_fly',
+        'application_status',
     ];
 
     public function user()

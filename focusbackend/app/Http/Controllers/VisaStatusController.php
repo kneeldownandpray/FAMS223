@@ -19,7 +19,10 @@ class VisaStatusController extends Controller
     $profession = $request->input('profession');
     $visaStep = $request->input('visa_step'); // e.g., 'requirements'
     
-    $query = Hired::with(['applicant.resume', 'applicant.visaStatus', 'employer']);
+    $query = Hired::with(['applicant.resume', 'applicant.visaStatus', 'employer'])
+        ->whereHas('applicant.visaStatus', function ($q) {
+            $q->where('application_status', 1);
+        });
 
     // Filter by name
     if ($name) {

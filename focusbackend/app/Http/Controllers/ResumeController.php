@@ -72,6 +72,7 @@ class ResumeController extends Controller
             VisaStatus::create([
                 'user_id' => $userId,
                 'application_received' => 1,
+                'application_status' => 1,
             ]);
 
             return response()->json($resume, 201);

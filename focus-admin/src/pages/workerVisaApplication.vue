@@ -74,7 +74,7 @@
                 label="Reject"
                 color="red"
                 size="sm"
-                @click="handleDoneTransaction(props.row.worker_id, 0, props.row)"
+                @click="handleDoneTransaction(props.row.worker_id, 2, props.row)"
               />
             </q-td>
           </template>
@@ -238,7 +238,7 @@ export default {
         Authorization: `Bearer ${token}`
       }
     });
-
+    this.fetchVisaStatuses();
     // this.fetchVisaStatuses(); // refresh list
   } catch (error) {
     console.error('Error marking transaction as done:', error);

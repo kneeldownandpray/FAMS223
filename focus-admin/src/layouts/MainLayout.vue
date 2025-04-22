@@ -274,7 +274,14 @@
             <q-item-label >Worker Visa App. Management</q-item-label>
           </q-item-section>
         </q-item>
-        
+        <q-item to="/WorkerVisaHistory" active-class="q-item-no-link-highlighting">
+        <q-item-section avatar>
+          <q-icon name="history" size="md" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>Worker Visa History</q-item-label>
+        </q-item-section>
+      </q-item>
         <!-- <q-item to="/TreeTable" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list"/>
