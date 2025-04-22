@@ -170,7 +170,7 @@ export default {
           align: 'left'
         },
         { name: 'profession', label: 'Profession', align: 'left', field: 'profession' },
-        { name: 'status', label: 'Status', align: 'center', field: 'status', sortable: true },
+        { name: 'status', label: 'Visa Status', align: 'center', field: 'status', sortable: true },
         {
           name: 'Date',
           label: 'Date',
