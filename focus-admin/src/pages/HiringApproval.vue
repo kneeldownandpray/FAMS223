@@ -9,39 +9,24 @@
         </div>
         <div style=" display: flex; justify-content: flex-end;">
 
-              <q-btn
-                label="Pending Approvals "
-                color="white"
-                text-color="black"
-                @click="toggleForRejectedAndApproved()"
-                class="q-mr-sm"
-              v-if="rejectedOrApproved"
-              />
-              <q-btn
-                label="Pending Approvals "
-                color="white"
-                text-color="white"
-                @click="toggleForRejectedAndApproved()"
-                class="q-mr-sm"
-                flat
-              v-else
-              />
-              <q-btn
-                label="Rejected Approvals"
-                color="white"
-                 @click="toggleForRejectedAndApproved()"
-                flat
-                v-if="rejectedOrApproved"
-              />
-
-
-              <q-btn
-                label="Rejected Approvals"
-                color="white"
-                text-color="black"
-                 @click="toggleForRejectedAndApproved()"
-                 v-else
-              />
+          <q-btn-group flat>
+            <q-btn
+              label="Pending Approvals"
+              :color="rejectedOrApproved ? 'white' : 'primary'"
+              :text-color="rejectedOrApproved ? 'black' : 'white'"
+              :flat="rejectedOrApproved"
+              :unelevated="!rejectedOrApproved"
+              @click="toggleForRejectedAndApproved()"
+            />
+            <q-btn
+              label="Rejected Approvals"
+              :color="rejectedOrApproved ? 'primary' : 'white'"
+              :text-color="rejectedOrApproved ? 'white' : 'black'"
+              :flat="!rejectedOrApproved"
+              :unelevated="rejectedOrApproved"
+              @click="toggleForRejectedAndApproved()"
+            />
+          </q-btn-group>
 
         </div>
         

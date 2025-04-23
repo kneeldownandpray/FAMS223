@@ -39,6 +39,23 @@
           :loading="loading"
           hide-bottom
         >
+
+        <template v-slot:body-cell-name_combo="props">
+            <q-td :props="props">
+
+              <q-btn
+                flat
+                dense
+                size="13px"
+                class="q-pa-sm"
+                color="primary"
+              
+                @click="onNameClick(props.row)"
+              >
+              {{ props.row.applicant_name }} ({{ props.row.employer_name }})
+              </q-btn>
+            </q-td>
+          </template>
           <!-- Dynamic visa status checkbox cells -->
           <template
             v-for="status in visaStatusKeys"
@@ -101,19 +118,36 @@
       </q-card>
     </q-dialog>
   </q-page>
+  
+  <q-dialog v-model="WorkerDetailDialog">
+          <q-card>
+            <q-card-section class="header-format-w">
+              <div class="flex" style="justify-content: space-between;">
+              <div class="text-h6">Requirements</div> 
+              <q-btn icon="close" flat @click="this.WorkerDetailDialog = false"  />
+            </div>
+        </q-card-section>
+           <DisplayWorkerSpecificDialog :idOfRequirement="userIDtoManage" @emittest="noRequirement(emittest)"/>
+          </q-card>
+    </q-dialog>
 </template>
 
 <script>
 import axios from 'axios';
-
+import DisplayWorkerSpecificDialog from 'components/GetSpecificDetail.vue';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export default {
   name: 'VisaStatusMatrix',
+  components: {
+    DisplayWorkerSpecificDialog
+  },
   data() {
     return {
       
       visaStatusList: [],
+      userIDtoManage:null,
+      WorkerDetailDialog: false,
       visaStatusKeys: [
         'application_received',
         'interview_employer_confirmation',
@@ -180,10 +214,14 @@ export default {
     columns() {
   return [
     {
-      name: 'applicant_employer',
-      label: 'Name (Employer)',
-      field: row => `${row.applicant_name} (${row.employer_name})`,
-      align: 'left'
+      name: 'name_combo',
+          label: 'Worker (Employer)',
+          field: row => {
+            const workerName = `${row.user?.first_name || ''} ${row.user?.last_name || ''}`;
+            const employerName = `${row.employer?.first_name || ''} ${row.employer?.last_name || ''}`;
+            return `${workerName} (${employerName})`;
+          },
+          align: 'left'
     },
     {
       name: 'profession',
@@ -220,6 +258,12 @@ export default {
     }
   },
   methods: {
+    onNameClick(row) {
+     
+      this.userIDtoManage=row.worker_id;
+      this.WorkerDetailDialog = true;
+      console.log('Clicked on name:', this.userIDtoManage);
+    },
     async handleDoneTransaction(workerId, status,transaction) {
   console.log(workerId, status,transaction);
   try {

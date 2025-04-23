@@ -82,7 +82,7 @@
               <q-btn
                 label="Revert"
                 color="red"
-                size="md"
+                size="sm"
                 @click="handleDoneTransaction(props.row.worker_id, 0, props.row)"
               />
             </q-td>

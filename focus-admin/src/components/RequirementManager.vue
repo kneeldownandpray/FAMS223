@@ -220,12 +220,12 @@ export default {
 .requirement-card {
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-  width: 48%;
+  width: 100%;
 }
 
-@media (max-width: 650px) {
+/* @media (max-width: 650px) {
   .requirement-card {
     width: 100% !important;
   }
-}
+} */
 </style>
