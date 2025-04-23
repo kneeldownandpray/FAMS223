@@ -21,7 +21,8 @@ class Resume extends Model
         'religion',
         'nationality',
         'contact_no',
-        'profession'
+        'profession',
+        
     ];
 
     // Define the relationship with User

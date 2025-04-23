@@ -210,7 +210,7 @@ class AccountController extends Controller
 
     // If $accountType is 6, include resume relations
     if ($accountType == 6) {
-        $query->with(['resume', 'resume.educationalAttainments', 'resume.workExperiences', 'resume.skills', 'resume.certifications', 'resume.userVideos']);
+        $query->with(['resume', 'resume.educationalAttainments', 'resume.workExperiences.jobDescriptions', 'resume.skills', 'resume.certifications', 'resume.userVideos']);
     }
 
     // Paginate and return results

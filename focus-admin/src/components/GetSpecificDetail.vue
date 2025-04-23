@@ -36,18 +36,28 @@
       <q-separator />
 
       <q-card-section>
-        <div class="text-h6">Work Experiences</div>
-        <q-list bordered v-if="users?.[0]?.resume?.work_experiences?.length">
-          <q-item v-for="work in users[0].resume.work_experiences" :key="work.id">
-            <q-item-section>
-              <div><strong>{{ work.position }}</strong> at {{ work.company_name }}</div>
-              <div>{{ work.company_address }}</div>
-              <div>{{ work.start_date }} to {{ work.end_date }}</div>
-              
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-card-section>
+  <div class="text-h6">Work Experiences</div>
+  <q-list bordered v-if="users?.[0]?.resume?.work_experiences?.length">
+    <q-item v-for="work in users[0].resume.work_experiences" :key="work.id">
+      <q-item-section>
+        <div><strong>{{ work.position }}</strong> at {{ work.company_name }}</div>
+        <div>{{ work.company_address }}</div>
+        <div>{{ work.start_date }} to {{ work.end_date }}</div>
+
+        <!-- Job Descriptions -->
+        <div v-if="work.job_descriptions?.length">
+          <div class="q-mt-sm"><em>Job Responsibilities:</em></div>
+          <ul class="q-ml-md">
+            <li v-for="desc in work.job_descriptions" :key="desc.id">
+              {{ desc.description }}
+            </li>
+          </ul>
+        </div>
+      </q-item-section>
+    </q-item>
+  </q-list>
+</q-card-section>
+
 
       <q-separator />
 

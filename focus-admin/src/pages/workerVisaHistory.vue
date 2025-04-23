@@ -110,18 +110,33 @@
       </q-card>
     </q-dialog>
   </q-page>
+  <q-dialog v-model="WorkerDetailDialog">
+          <q-card>
+            <q-card-section class="header-format-w">
+              <div class="flex" style="justify-content: space-between;">
+              <div class="text-h6">Requirements</div> 
+              <q-btn icon="close" flat @click="this.WorkerDetailDialog = false"  />
+            </div>
+        </q-card-section>
+           <DisplayWorkerSpecificDialog :idOfRequirement="userIDtoManage" @emittest="noRequirement(emittest)"/>
+          </q-card>
+    </q-dialog>
 </template>
 
 <script>
 import axios from 'axios';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-
+import DisplayWorkerSpecificDialog from 'components/GetSpecificDetail.vue';
 export default {
+  components: {
+    DisplayWorkerSpecificDialog
+  },
   data() {
     return {
       worker_id:null,
       selected_row:null,
       sected_row_status:null,
+      WorkerDetailDialog: false,
       filters: {
         worker_name: '',
         employer_name: '',
@@ -134,6 +149,7 @@ export default {
       },
       loading: false,
       visaStatusHistoryList: [],
+      userIDtoManage:null,
       visaStatusOptions: [
         { label: 'Completed', value: 1 },
         { label: 'Incomplete', value: 2 },
@@ -278,8 +294,10 @@ export default {
       }, 
 
     onNameClick(row) {
-      // Optional: show dialog or route to user profile
-      console.log('Clicked on name:', row);
+       
+      this.userIDtoManage=row.user_id;
+      this.WorkerDetailDialog = true;
+      console.log('Clicked on name:', this.userIDtoManage);
     },
     getRowClass(row) {
       if (row.status === 0) {
