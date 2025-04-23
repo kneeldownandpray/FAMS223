@@ -168,4 +168,31 @@ class VisaStatusHistoryController extends Controller
             'message' => 'Visa Status History deleted successfully'
         ]);
     }
+
+    public function revert($id)
+    {
+        // Hanapin ang VisaStatusHistory record
+        $history = VisaStatusHistory::find($id);
+    
+        if (!$history) {
+            return response()->json(['message' => 'History not found.'], 404);
+        }
+    
+        // Hanapin ang corresponding VisaStatus
+        $visaStatus = VisaStatus::find($history->visa_status_id);
+    
+        if (!$visaStatus) {
+            return response()->json(['message' => 'VisaStatus not found.'], 404);
+        }
+    
+        // I-update ang application_status sa 1
+        $visaStatus->application_status = 1;
+        $visaStatus->save();
+    
+        // I-delete yung history record
+        $history->delete();
+    
+        return response()->json(['message' => 'Visa status reverted and history deleted.'], 200);
+    }
+    
 }

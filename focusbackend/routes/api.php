@@ -73,6 +73,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/visa-statuses', [VisaStatusController::class, 'index']);
     Route::get('/visa-progress', [VisaStatusController::class, 'getProgress']);
     Route::put('/visa-statuses/{workerId}', [VisaStatusController::class, 'update']);
+    Route::delete('/visa-status/revert/{id}', [VisaStatusHistoryController::class, 'revert']);
+
 
 
     Route::post('register', [AuthController::class, 'register']); 
