@@ -15,7 +15,23 @@
                 {{ entry.employer.first_name }} {{ entry.employer.last_name }}
               </q-btn>
             </div>
-            <q-btn color="primary" @click="toggleApplicants(entry)">View Applicants</q-btn>
+            <!-- <q-btn color="primary" @click="toggleApplicants(entry)">View Applicants</q-btn> -->
+            <q-btn
+              flat
+            
+              color="primary"
+              @click="toggleApplicants(entry)"
+            >
+              <q-icon 
+                name="expand_more" 
+                :class="{
+                  'rotate-icon': true,
+                  'rotated': entry.showApplicants
+                }"
+                size="40px"
+            />
+            </q-btn>
+
           </div>
           <q-slide-transition>
             <div v-if="entry.showApplicants" class="q-mt-sm">
@@ -162,5 +178,12 @@ export default {
   border-bottom: 3px solid rgb(255, 187, 0);
   margin-bottom: 5px;
   box-shadow: none !important;
+}
+.rotate-icon {
+  transition: transform 0.3s ease;
+}
+
+.rotated {
+  transform: rotate(180deg);
 }
 </style>

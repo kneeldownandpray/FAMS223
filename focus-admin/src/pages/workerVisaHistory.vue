@@ -114,10 +114,14 @@
 
 <script>
 import axios from 'axios';
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export default {
   data() {
     return {
+      worker_id:null,
+      selected_row:null,
+      sected_row_status:null,
       filters: {
         worker_name: '',
         employer_name: '',
@@ -189,6 +193,16 @@ export default {
             return `${timeString} (${dateString})`;
           }
         },
+        {
+          name: 'Approved',
+          label: 'Approved by',
+          field: row => {
+           
+            const employerName = `${row.approved_by?.first_name || ''} `;
+            return `${employerName}`;
+          },
+          align: 'center'
+        },
 
         { name: 'actions', label: 'Actions', align: 'center' }
       ];
@@ -233,11 +247,36 @@ export default {
     handleDoneTransaction(worker_id, status, row) {
       this.confirmDialog = true;
       this.confirmationMessage = `Are you sure you want to revert the transaction as for ${row.user?.first_name} ${row.user?.last_name}?`;
+      this.sected_row_status = row;
+      this.worker_id = worker_id;
+      this.row = row;
     },
-    updateVisaStatus() {
-      this.confirmDialog = false;
-      console.log('Visa status updated');
-    },
+    async updateVisaStatus() {
+  // Close the confirmation dialog
+        this.confirmDialog = false;
+        
+        console.log(this.sected_row_status.id);
+        // Get the token from localStorage
+        const token = localStorage.getItem('access_token');
+        
+
+        try {
+          // Make the API call to revert the visa status
+          const response = await axios.delete(`${apiBaseUrl}/visa-status/revert/${this.sected_row_status.id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`, // Attach the token to the request headers
+            },
+          });
+
+          // Log the success response
+          this.fetchVisaStatusHistory();
+
+        } catch (error) {
+          // Log any errors that occur during the API request
+          console.error('Error reverting visa status:', error);
+        }
+      }, 
+
     onNameClick(row) {
       // Optional: show dialog or route to user profile
       console.log('Clicked on name:', row);
