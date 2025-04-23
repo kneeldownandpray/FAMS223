@@ -14,9 +14,9 @@
 
       <q-card-section>
         <!-- Filter input -->
-        <div class="q-mb-md flex" style="flex-direction: row; align-items: center; gap:10px">
-          <q-input filled v-model="filters.name" label="Search Name" class="col-12 col-md-4" />
-          <q-select filled clearable :options="professionOptions" v-model="filters.profession" label="Profession" class="col-12 col-md-4" style="width: 190px;" />
+        <div class="q-mb-md flex"   clearable style="flex-direction: row; align-items: center; gap:10px">
+          <q-input   clearable filled v-model="filters.name" label="Search Name" class="col-12 col-md-4" />
+          <q-select  filled clearable :options="professionOptions" v-model="filters.profession" label="Profession" class="col-12 col-md-4" style="width: 190px;" />
             <q-select
             filled
             v-model="filters.visa_step"
@@ -26,6 +26,7 @@
             map-options
             clearable
             style="width: 190px;"
+            @update:model-value="fetchVisaStatuses"
           /> 
           <q-btn icon="search" label="Search" color="primary"  @click="fetchVisaStatuses" class="q-pa-md" />
         </div>

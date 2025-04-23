@@ -3,6 +3,14 @@
     <q-card flat bordered class="q-pa-md">
       <q-card-section>
         <!-- <div class="text-h5">Resume</div> -->
+<div class="q-mb-lg" style="display: flex; align-items: center; justify-content: center;">
+        <img
+      :src="this.imgsourcelink"
+      alt=""
+      style="height: 160px; width: 160px; border-radius: 50%;
+            box-shadow: rgb(149 157 165 / 51%) 1px 2px 6px;"
+    >
+  </div>
         <div v-if="users?.[0]?.resume">
           <div class="q-mt-sm text-h5 q-mb-sm" style="font-weight: 600;"><strong></strong> {{ users[0].resume.full_name }}</div>
           <div><strong>Address:</strong> {{ users[0].resume.address }}</div>
@@ -129,14 +137,17 @@
       </q-card-section>
 
       <q-separator />
-
+      <div v-if="this.objectversion">
+      <DownloadResume  :resumeData2="this.objectversion.id"  />
+    </div>
     </q-card>
   </q-page>
 </template>
 
 <script>
 import axios from 'axios';
-
+const ImageBaseUrl = import.meta.env.VITE_IMG_DP;
+import DownloadResume from '../components/DownloadResume.vue';
 export default {
   name: 'AdminRequirements',
   props: {
@@ -145,15 +156,35 @@ export default {
       required: true
     }
   },
+  components: { DownloadResume},
   data() {
     return {
       requirements: [],
       users: null,
+      linkenv: ImageBaseUrl,
+      imgsourcelink:null,
+      objectversion:null,
       token: localStorage.getItem('access_token'),
       apiBaseUrl: import.meta.env.VITE_API_BASE_URL
     };
   },
   methods: {
+    getresumeLink(get) {
+  // Check kung array siya at may laman
+  if (Array.isArray(get) && get.length > 0) {
+    get = get[0]; // kunin lang yung unang object
+  }
+  this.objectversion = get;
+  console.log(get);
+
+  // Make sure na may profile_picture property
+  if (get.profile_picture) {
+    this.imgsourcelink = this.linkenv + get.profile_picture.replace('profile_pictures/', '');
+  } else {
+    console.warn("Walang profile_picture sa object.");
+  }
+},
+    
     async fetchRequirements() {
       try {
         const url = this.idOfRequirement
@@ -185,6 +216,7 @@ export default {
           }
         });
         this.users = response.data.data;
+        this.getresumeLink(this.users);
       } catch (error) {
         console.error('Failed to fetch user details:', error);
       }

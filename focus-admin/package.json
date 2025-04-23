@@ -13,6 +13,8 @@
     "@quasar/quasar-ui-qcalendar": "^4.0.0-beta.19",
     "axios": "^1.7.4",
     "echarts": "^5.4.1",
+    "file-saver": "^2.0.5",
+    "pdf-lib": "^1.17.1",
     "pinia": "^2.0.11",
     "quasar": "^2.16.4",
     "socket.io-client": "^4.8.0",

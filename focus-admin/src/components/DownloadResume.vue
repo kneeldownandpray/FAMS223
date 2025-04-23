@@ -6,9 +6,11 @@
 </template>
 
 <script>
+import axios from 'axios';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { saveAs } from 'file-saver';
 const ImageBaseUrl = import.meta.env.VITE_IMG_PDF_DL;
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 export default {
 
   props: {
@@ -21,6 +23,7 @@ export default {
     return {
       linkenv:null,
       imgsourcelink:"",
+      token: localStorage.getItem('access_token'),
       resumeData: {
         name: "",
         address: "",
@@ -53,12 +56,34 @@ export default {
   },
   mounted() {
   if (this.resumeData2) {
-    this.populateResumeData(this.resumeData2); 
+    this.fetchSpecificDetails(this.resumeData2);
   }
 },
   methods: {
 
+    async fetchSpecificDetails(id) {
+      console.log(id);
+      try {
+        const response = await axios.get(`${apiBaseUrl}/validUsers`, {
+          headers: { Authorization: `Bearer ${this.token}` },
+          params: {
+            id: id,
+            account_type: 6
+          }
+        });
+        this.users = response.data.data;
+
+        // this.getresumeLink(this.users);
+        this.populateResumeData(this.users[0].resume); // ← object na!
+
+      } catch (error) {
+        console.error('Failed to fetch user details:', error);
+      }
+    },
+
     populateResumeData(json) {
+
+      console.log(json);
       this.linkenv = ImageBaseUrl;
       // Assume json.user.profile_picture is something like 'profile_pictures/filename.jpg'
     this.imgsourcelink = this.linkenv + json.user.profile_picture.replace('profile_pictures/', '');
