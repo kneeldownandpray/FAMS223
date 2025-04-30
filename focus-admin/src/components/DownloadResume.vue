@@ -17,10 +17,15 @@ export default {
     resumeData2: {
       type: Object, // or the appropriate type for your data
       required: true
+    },
+    displayProfilePicture: {
+      type: null, // or the appropriate type for your data
+      required: true
     }
   },
   data() {
     return {
+      insertProfilePic:null,
       linkenv:null,
       imgsourcelink:"",
       token: localStorage.getItem('access_token'),
@@ -58,11 +63,13 @@ export default {
   if (this.resumeData2) {
     this.fetchSpecificDetails(this.resumeData2);
   }
+  if(this.displayProfilePicture){
+    this.insertProfilePic = this.displayProfilePicture;
+  }
 },
   methods: {
 
     async fetchSpecificDetails(id) {
-      console.log(id);
       try {
         const response = await axios.get(`${apiBaseUrl}/validUsers`, {
           headers: { Authorization: `Bearer ${this.token}` },
@@ -74,28 +81,25 @@ export default {
         this.users = response.data.data;
 
         // this.getresumeLink(this.users);
-        this.populateResumeData(this.users[0].resume); // ← object na!
+        this.populateResumeData(this.users[0].resume,this.users[0]); // ← object na!
 
       } catch (error) {
         console.error('Failed to fetch user details:', error);
       }
     },
 
-    populateResumeData(json) {
-
-      console.log(json);
+    populateResumeData(json,userdata) {
       this.linkenv = ImageBaseUrl;
-      // Assume json.user.profile_picture is something like 'profile_pictures/filename.jpg'
-    this.imgsourcelink = this.linkenv + json.user.profile_picture.replace('profile_pictures/', '');
-
+    this.imgsourcelink = this.linkenv + this.insertProfilePic.replace('profile_pictures/', '');
     this.resumeData.name = json.full_name || "";
     this.resumeData.address = json.address || "";
     this.resumeData.mobileNumber = json.contact_no || "";
-    this.resumeData.email = json.user?.email || "";
+    this.resumeData.email = userdata.email || "";
     this.resumeData.summary = json.objectives || "";
-    this.resumeData.age = json.user?.birthday ? this.calculateAge(json.user.birthday) : null;
-    this.resumeData.date =json.user.birthday || "";
-    this.resumeData.gender = json.user?.gender || "";
+    this.resumeData.age = userdata.birthday ? this.calculateAge(userdata.birthday) : null;
+    this.resumeData.date =userdata.birthday || "";
+    this.resumeData.gender = userdata.gender || "";
+   
     this.resumeData.civilstatus = json.civil_status || "";
     this.resumeData.height = json.height ? String(json.height) : "";
     this.resumeData.weight = json.weight ? String(json.weight) : "";

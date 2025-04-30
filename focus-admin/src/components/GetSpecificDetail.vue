@@ -138,7 +138,8 @@
 
       <q-separator />
       <div v-if="this.objectversion">
-      <DownloadResume  :resumeData2="this.objectversion.id"  />
+      <DownloadResume  :resumeData2="this.objectversion.id" :displayProfilePicture="this.objectversion.profile_picture"  />
+      <!-- {{ this.objectversion.profile_picture }} -->
     </div>
     </q-card>
   </q-page>

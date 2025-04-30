@@ -142,83 +142,90 @@ class AccountController extends Controller
         return response()->json($users);
     }
     public function getFilteredAccounts(Request $request)
-{
-    $user = $request->user();
-    $userAccountType = $user->account_type;
-
-    $search = $request->input('search');
-    $accountType = $request->input('account_type');
-    $status = $request->input('status', 2); // Default to status 2 if not provided
-    $perPage = $request->input('per_page', 10);
-    $userId = $request->input('id'); // Get the ID input
-
-    // Initialize query for Users
-    $query = User::query()
+    {
+        $user = $request->user();
+        $userAccountType = $user->account_type;
+    
+        $search = $request->input('search');
+        $accountType = $request->input('account_type');
+        $status = $request->input('status', 2); // Default to status 2 if not provided
+        $perPage = $request->input('per_page', 10);
+        $userId = $request->input('id'); // Get the ID input
+    
+        // Initialize query for Users
+        $query = User::with([
+            'accountInformation',
+            'resume.educationalAttainments',
+            'resume.workExperiences.jobDescriptions',
+            'resume.skills',
+            'resume.certifications',
+            'resume.userVideos',
+            'resumes', // in case may multiple resumes
+            'videos',
+            'applicantHired',
+            'requirements',
+            'visaStatus'
+        ])
         ->leftJoin('account_informations', 'users.id', '=', 'account_informations.user_id')
         ->select('users.*', 'account_informations.skills_assessment', 'account_informations.account_acceptor_id', 'account_informations.account_status')
         ->where('account_informations.account_status', $status)
         ->whereNotNull('account_informations.account_acceptor_id');
-
-    // Filter by ID if provided
-    if ($userId) {
-        $query->where('users.id', $userId);
-    }
-
-    // If $userAccountType is 1, filter by account type
-    if ($userAccountType === 1) {
-        if ($accountType) {
-            $query->where('users.account_type', $accountType);
+    
+        // Filter by ID if provided
+        if ($userId) {
+            $query->where('users.id', $userId);
         }
-    } else {
-        if ($accountType) {
-            $query->where('users.account_type', $accountType);
+    
+        // Account type filtering logic
+        if ($userAccountType === 1) {
+            if ($accountType) {
+                $query->where('users.account_type', $accountType);
+            }
         } else {
-            $query->where('users.account_type', $userAccountType);
+            if ($accountType) {
+                $query->where('users.account_type', $accountType);
+            } else {
+                $query->where('users.account_type', $userAccountType);
+            }
         }
+    
+        // Search filter
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('users.first_name', 'like', "%{$search}%")
+                  ->orWhere('users.last_name', 'like', "%{$search}%")
+                  ->orWhere('users.email', 'like', "%{$search}%");
+            });
+        }
+    
+        // Additional filters
+        $profession = $request->input('profession');
+        $visaStatus = $request->input('visa_status');
+        $skillAssessment = $request->input('skill_assessment');
+        $gender = $request->input('gender');
+    
+        if ($profession) {
+            $query->where('account_informations.profession', 'like', "%{$profession}%");
+        }
+    
+        if ($visaStatus) {
+            $query->where('account_informations.visa_status', 'like', "%{$visaStatus}%");
+        }
+    
+        if ($skillAssessment) {
+            $query->where('account_informations.skills_assessment', 'like', "%{$skillAssessment}%");
+        }
+    
+        if ($gender) {
+            $query->where('users.gender', 'like', "%{$gender}%");
+        }
+    
+        // Paginate and return results
+        $users = $query->paginate($perPage);
+    
+        return response()->json($users);
     }
-
-    // Search filter (first name, last name, email)
-    if ($search) {
-        $query->where(function ($q) use ($search) {
-            $q->where('users.first_name', 'like', "%{$search}%")
-              ->orWhere('users.last_name', 'like', "%{$search}%")
-              ->orWhere('users.email', 'like', "%{$search}%");
-        });
-    }
-
-    // Additional filters
-    $profession = $request->input('profession');
-    $visaStatus = $request->input('visa_status');
-    $skillAssessment = $request->input('skill_assessment');
-    $gender = $request->input('gender');
-
-    if ($profession) {
-        $query->where('account_informations.profession', 'like', "%{$profession}%");
-    }
-
-    if ($visaStatus) {
-        $query->where('account_informations.visa_status', 'like', "%{$visaStatus}%");
-    }
-
-    if ($skillAssessment) {
-        $query->where('account_informations.skills_assessment', 'like', "%{$skillAssessment}%");
-    }
-
-    if ($gender) {
-        $query->where('users.gender', 'like', "%{$gender}%");
-    }
-
-    // If $accountType is 6, include resume relations
-    if ($accountType == 6) {
-        $query->with(['resume', 'resume.educationalAttainments', 'resume.workExperiences.jobDescriptions', 'resume.skills', 'resume.certifications', 'resume.userVideos']);
-    }
-
-    // Paginate and return results
-    $users = $query->paginate($perPage);
-
-    return response()->json($users);
-}
-
+    
     
 
 
