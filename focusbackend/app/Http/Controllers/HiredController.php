@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Hired;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Resume;
 
 class HiredController extends Controller
 {

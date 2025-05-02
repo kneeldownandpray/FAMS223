@@ -79,6 +79,7 @@
     @click="handleLogout"
   >
   </q-btn>
+  <!-- <button>exit</button> -->
 </div>
 
       </q-toolbar>

@@ -6,7 +6,8 @@
       <div class="text-h3 q-mb-md" style="
     display: flex;
     justify-content: space-between;
-      "><strong>CV or Resume</strong>
+      ">
+      <!-- <strong>CV or Resume</strong> -->
       <div style="cursor: pointer; position: relative; width: 160px; height: 160px;">
     <!-- Black Overlay with Pencil Icon (hidden by default) -->
     <div  @click="showDialogForProfilePic = true"

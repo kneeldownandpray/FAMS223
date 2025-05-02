@@ -43,7 +43,8 @@
           </q-btn>
           <q-btn round flat>
             <q-avatar size="26px">
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              <img v-if="imageDisplay" :src="imgsourcelink" />
+              <q-icon v-else name="person" />
             </q-avatar>
           </q-btn>
           <q-btn
@@ -54,6 +55,8 @@
             icon="logout"
             @click="handleLogout"
           />
+
+          <button>exit</button>
         </div>
       </q-toolbar>
     </q-header>
@@ -123,6 +126,15 @@
             <q-item-label >Visa Status</q-item-label>
           </q-item-section>
         </q-item>
+
+        <q-item v-if="user?.account_type === 6" to="/applicant/VisaTransaction" active-class="q-item-no-link-highlighting">
+          <q-item-section avatar>
+            <q-icon name="history" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Visa Transaction History</q-item-label>
+          </q-item-section>
+        </q-item>
         
         <q-item v-if="user?.account_type === 5" to="/employer/profile" active-class="q-item-no-link-highlighting">
        <q-item-section avatar>
@@ -187,6 +199,7 @@ import Messages from './Messages.vue';
 import axios from 'axios';
 import router from 'src/router';
 import { io } from 'socket.io-client';
+const ImageBaseUrl = import.meta.env.VITE_IMG_DP;
 
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -202,12 +215,14 @@ export default {
 
   data() {
     return {
+      imagelink:ImageBaseUrl,
       leftDrawerOpen: false,
       first_name: '',
       user: null,
       pollingInterval: null,
       isLoading: true, // Add a loading state
       VisaStatusDialog:false,
+      imageDisplay:false,
     };
   },
 
@@ -217,6 +232,7 @@ export default {
     }
   },
   created(){
+    this.fetchUserData();
     const socketBaseUrl = import.meta.env.VITE_SOCKET_BASE_URL;
     this.socket = io(socketBaseUrl);
     this.socket.on('receiverTriggerness', (action, id) => {
@@ -228,6 +244,16 @@ export default {
   },
 
   methods: {
+    getresumeLink(get){
+      this.imgsourcelink = this.imagelink + get.replace('profile_pictures/', '');
+      console.log(this.imgsourcelink)
+      this.displayimg2();
+    },
+    displayimg2(){
+      this.imageDisplay = true;
+
+    },
+
     refreshrouter() {
       this.$router.go(); // Refresh the current route
     },
@@ -296,6 +322,10 @@ export default {
 
           this.user = response.data;
           this.first_name = this.user.first_name;
+          console.log(this.user.profile_picture);
+          if(this.user.profile_picture){
+          this.getresumeLink(this.user.profile_picture);
+        }
         }
       } catch (error) {
         console.error('Failed to fetch user data:', error);
@@ -306,9 +336,7 @@ export default {
     }
   },
 
-  mounted() {
-    this.fetchUserData();
-  },
+
 
   beforeUnmount() {
     if (this.pollingInterval) {

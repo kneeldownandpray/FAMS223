@@ -53,33 +53,39 @@ class ResumeController extends Controller
             'profession' => 'nullable|string',
             'contact_no' => 'nullable|string',
         ]);
-
+    
         $userId = auth()->id();
-
+    
         $existingResume = Resume::where('user_id', $userId)->first();
         if ($existingResume) {
             return response()->json(['message' => 'Resume already exists.'], 400);
         }
-
+    
         if (auth()->user()->account_type == 6) {
             $data['user_id'] = $userId;
             $resume = Resume::create($data);
-
+    
             // Handle skills and certifications
             $this->storeSkillsAndCertifications($request, $resume);
-
-            // ✅ Create visa status entry
+    
+            // Check if the profession requires skill assessment
+            $professionsRequiringAssessment = ['Sign Writer', 'Welder', 'Electrician']; // add more as needed
+            $skillAssessment = in_array($data['profession'], $professionsRequiringAssessment) ? 0 : 3; // 0 means not accept but with SA,1 means approve and 3 means no SA 
+    
+            // Create visa status entry
             VisaStatus::create([
                 'user_id' => $userId,
                 'application_received' => 1,
                 'application_status' => 1,
+                'skill_assessment' => $skillAssessment, // ✅ this line added
             ]);
-
+    
             return response()->json($resume, 201);
         }
-
+    
         return response()->json(['message' => 'Unauthorized Application for Resume (this user is not a worker).'], 403);
     }
+    
 
     public function update(Request $request, $id)
     {

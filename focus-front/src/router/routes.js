@@ -68,7 +68,7 @@ const routes = [
       { path: '/applicant/AddVideo', component: () => import('pages/applicant/SubmitVideo.vue'), meta: { requiresAuth: true } },
       { path: '/applicant/videos', component: () => import('pages/applicant/VideoList.vue'), meta: { requiresAuth: true } },
       { path: '/applicant/requirements', component: () => import('pages/applicant/UploadRequirements.vue'), meta: { requiresAuth: true } },
-      
+      { path: '/applicant/VisaTransaction', component: () => import('pages/applicant/VisaTransactionHistory.vue'), meta: { requiresAuth: true } },
 
       // Employer routes (for users with account_status 5)
       { path: '/employer/dashboard', component: () => import('pages/employer/Dashboard.vue'), meta: { requiresAuth: true } },
