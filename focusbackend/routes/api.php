@@ -74,8 +74,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/visa-progress', [VisaStatusController::class, 'getProgress']);
     Route::put('/visa-statuses/{workerId}', [VisaStatusController::class, 'update']);
     Route::delete('/visa-status/revert/{id}', [VisaStatusHistoryController::class, 'revert']);
-
-
+    Route::get('/worker/visa/history', [VisaStatusHistoryController::class, 'displayHistoryandVisaStatusOfWorker']);
+    
 
     Route::post('register', [AuthController::class, 'register']); 
     Route::get('/counter/status-one', [CounterController::class, 'countStatusOne']);
@@ -106,6 +106,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/resumes/video/{userId}', [ResumeController::class, 'getByUserVideo']);
     Route::apiResource('educational-attainments', EducationalAttainmentController::class);
     Route::apiResource('work-experiences', WorkExperienceController::class);
+
+    
     // Route::post('work-experiences', [WorkExperienceController::class, 'test']);
     Route::post('/user-videos', [UserVideoController::class, 'store']);    // Create new video
     Route::get('/user-videos', [UserVideoController::class, 'index']);     // Fetch all videos

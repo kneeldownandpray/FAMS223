@@ -9,25 +9,6 @@
       <q-separator />
 
       <q-card-section>
-        <!-- Filter input -->
-        <div class="q-mb-md flex" style="flex-direction: row; align-items: center; gap:10px">
-          <q-input clearable filled v-model="filters.worker_name" label="Search Worker Name" class="col-12 col-md-4" />
-          <q-input clearable filled v-model="filters.employer_name" label="Search Employer Name" class="col-12 col-md-4" />
-          <q-select filled clearable :options="professionOptions" v-model="filters.profession" label="Profession" class="col-12 col-md-4" style="width: 190px;" 
-          @update:model-value="fetchVisaStatusHistory" />
-          <q-select
-            filled
-            v-model="filters.status"
-            :options="visaStatusOptions"
-            label="Status"
-            emit-value
-            map-options
-            clearable
-            style="width: 190px;"
-           @update:model-value="fetchVisaStatusHistory"
-          />
-          <q-btn icon="search" label="Search" color="primary" @click="fetchVisaStatusHistory" class="q-pa-md" />
-        </div>
 
         <q-table
           :rows="visaStatusHistoryList"
@@ -40,20 +21,6 @@
         >
 
 
-          <!-- name_combo as button -->
-          <template v-slot:body-cell-name_combo="props">
-            <q-td :props="props">
-              <q-btn
-                flat
-                dense
-                size="13px"
-                class="q-pa-sm"
-                color="primary"
-                :label="`${props.row.user?.first_name || ''} ${props.row.user?.last_name || ''} (${props.row.employer?.first_name || ''} ${props.row.employer?.last_name || ''})`"
-                @click="onNameClick(props.row)"
-              />
-            </q-td>
-          </template>
 
           <!-- Status column with colored flat buttons -->
           <template v-slot:body-cell-status="props">
@@ -80,10 +47,10 @@
                 class="q-mr-sm"
               /> -->
               <q-btn
-                label="Revert"
-                color="red"
+                label="Review More"
+                color="green"
                 size="sm"
-                @click="handleDoneTransaction(props.row.worker_id, 0, props.row)"
+                @click="handleDoneTransaction(props.row)"
               />
             </q-td>
           </template>
@@ -91,50 +58,57 @@
       </q-card-section>
     </q-card>
 
-    <!-- Confirmation Dialog -->
     <q-dialog v-model="confirmDialog">
-      <q-card>
-        <q-card-section class="row items-center justify-between">
-          <div class="text-h6">Confirm Update</div>
-          <q-btn flat icon="close" @click="confirmDialog = false" />
-        </q-card-section>
+  <q-card>
+    <q-card-section class="row items-center justify-between">
+      <div class="text-h6">Visa Transaction</div>
+      <q-btn flat icon="close" @click="confirmDialog = false" />
+    </q-card-section>
 
-        <q-card-section>
-          <p>{{ confirmationMessage }}</p>
-        </q-card-section>
+    <q-separator />
 
-        <q-card-actions align="right">
-          <q-btn flat label="Cancel" color="grey" @click="confirmDialog = false" />
-          <q-btn color="green" label="Yes, Update" @click="updateVisaStatus" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    <q-card-section>
+      <div
+        v-for="(value, key) in filteredVisaStatus"
+        :key="key"
+        class="q-mb-sm"
+      >
+        <div class="row justify-between items-center">
+          <div class="text-subtitle2 text-capitalize">
+            {{ formatKey(key) }}
+          </div>
+          <q-badge
+            :color="value == 1 ? 'green' : 'red'"
+            :label="value == 1 ? 'Complete' : 'Incomplete'"
+            class="q-ml-sm"
+          />
+        </div>
+      </div>
+    </q-card-section>
+
+    <!-- <q-card-actions align="right">
+      <q-btn flat label="Close" color="grey" @click="confirmDialog = false" />
+    </q-card-actions> -->
+  </q-card>
+</q-dialog>
+
+    
   </q-page>
-  <q-dialog v-model="WorkerDetailDialog">
-          <q-card>
-            <q-card-section class="header-format-w">
-              <div class="flex" style="justify-content: space-between;">
-              <div class="text-h6">Requirements</div> 
-              <q-btn icon="close" flat @click="this.WorkerDetailDialog = false"  />
-            </div>
-        </q-card-section>
-           <DisplayWorkerSpecificDialog :idOfRequirement="userIDtoManage" @emittest="noRequirement(emittest)"/>
-          </q-card>
-    </q-dialog>
-</template>
 
+</template>
 <script>
 import axios from 'axios';
+
+
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export default {
-  components: {
-    DisplayWorkerSpecificDialog
-  },
+
   data() {
     return {
-      worker_id:null,
-      selected_row:null,
-      sected_row_status:null,
+      worker_id: null,
+      selected_row: null,
+      sected_row_status: null,
       WorkerDetailDialog: false,
       filters: {
         worker_name: '',
@@ -148,7 +122,7 @@ export default {
       },
       loading: false,
       visaStatusHistoryList: [],
-      userIDtoManage:null,
+      userIDtoManage: null,
       visaStatusOptions: [
         { label: 'Completed', value: 1 },
         { label: 'Incomplete', value: 2 },
@@ -176,18 +150,20 @@ export default {
     };
   },
   computed: {
+    filteredVisaStatus() {
+    const { id, user_id, application_status, created_at, updated_at, skill_assessment, ...rest } = this.selected_row.visa_status;
+
+    const filtered = { ...rest };
+
+    if (skill_assessment !== 3) {
+      filtered.skill_assessment = skill_assessment;
+    }
+
+    return filtered;
+  },
     columns() {
       return [
-        {
-          name: 'name_combo',
-          label: 'Worker (Employer)',
-          field: row => {
-            const workerName = `${row.user?.first_name || ''} ${row.user?.last_name || ''}`;
-            const employerName = `${row.employer?.first_name || ''} ${row.employer?.last_name || ''}`;
-            return `${workerName} (${employerName})`;
-          },
-          align: 'left'
-        },
+        
         { name: 'profession', label: 'Profession', align: 'left', field: 'profession' },
         { name: 'status', label: 'Visa Status', align: 'center', field: 'status', sortable: true },
         {
@@ -198,39 +174,80 @@ export default {
           format: val => {
             if (!val) return '';
             const date = new Date(val);
-
             const timeOptions = { hour: 'numeric', minute: 'numeric', hour12: true };
             const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-
-            const timeString = date.toLocaleTimeString([], timeOptions); // e.g. 3:45 PM
-            const dateString = date.toLocaleDateString(undefined, dateOptions); // e.g. April 22, 2025
-
-            return `${timeString} (${dateString})`;
+            return `${date.toLocaleTimeString([], timeOptions)} (${date.toLocaleDateString(undefined, dateOptions)})`;
           }
         },
-        {
-          name: 'Approved',
-          label: 'Approved by',
-          field: row => {
-           
-            const employerName = `${row.approved_by?.first_name || ''} `;
-            return `${employerName}`;
-          },
-          align: 'center'
-        },
-
-        { name: 'actions', label: 'Actions', align: 'center' }
+        { name: 'actions', label: 'Review', align: 'center' }
       ];
     }
   },
   mounted() {
- 
+    this.fetchVisaStatusHistory();
   },
   methods: {
+    formatKey(key) {
+    return key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  },
+    async fetchVisaStatusHistory() {
+      this.loading = true;
+      try {
+        const token = localStorage.getItem('access_token_applicant');
+        const response = await axios.get(`${apiBaseUrl}/worker/visa/history`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+        });
+
+        // Set the visaStatusHistoryList from response
+      
+        this.visaStatusHistoryList = response.data.data;
+        console.log(this.visaStatusHistoryList);
+      } catch (error) {
+        console.error('Error fetching visa status history:', error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    onNameClick(row) {
+      this.userIDtoManage = row.user_id;
+      this.WorkerDetailDialog = true;
+    },
+
+    handleDoneTransaction(rowData) {
+     
+      this.selected_row = rowData;
+      console.log(this.selected_row);
+      // this.worker_id = workerId;
+      // this.selected_row = rowData;
+      // this.sected_row_status = statusValue;
+      // this.confirmationMessage = `Are you sure you want to ${statusValue === 1 ? 'mark this as done' : 'revert this transaction'}?`;
+      this.confirmDialog = true;
+    },
+
+    async updateVisaStatus() {
+      const token = localStorage.getItem('access_token_employer');
+      try {
+        await axios.put(`${apiBaseUrl}/api/visa/update-status/${this.worker_id}`, {
+          status: this.sected_row_status
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        this.confirmDialog = false;
+        this.fetchVisaStatusHistory(); // Refresh table
+      } catch (error) {
+        console.error('Failed to update status:', error);
+      }
+    },
+
+    noRequirement(value) {
+      this.WorkerDetailDialog = value;
+    }
   }
 };
 </script>
-
-<style scoped>
-/* Custom styling if needed */
-</style>

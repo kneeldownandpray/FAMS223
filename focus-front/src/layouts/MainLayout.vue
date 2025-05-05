@@ -56,7 +56,7 @@
             @click="handleLogout"
           />
 
-          <button>exit</button>
+  
         </div>
       </q-toolbar>
     </q-header>
@@ -65,7 +65,7 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-      class="bg-primary text-white"
+      class="bg-dark text-white"
     >
       <q-list pointers>
         <div style="padding-left:60px;padding-right:70px; padding-top: 5px;padding-bottom: 15px;">

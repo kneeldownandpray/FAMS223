@@ -117,6 +117,31 @@ class VisaStatusHistoryController extends Controller
         return response()->json($visaStatusHistory);
     }
 
+
+    public function displayHistoryandVisaStatusOfWorker()
+    {
+        $user = Auth::user();
+        $id = $user->id;
+    
+        // Get all visa status items for user
+        $visaStatuses = VisaStatus::where('user_id', $id)->get()->keyBy('id'); // keyBy visa_status_id
+    
+        // Get visa status history and append matching visa status
+        $histories = VisaStatusHistory::where('user_id', $id)->get()->map(function ($history) use ($visaStatuses) {
+            $history->visa_status = $visaStatuses[$history->visa_status_id] ?? null;
+            return $history;
+        });
+    
+        if ($histories->isEmpty()) {
+            return response()->json(['message' => 'No records found for this user ID.'], 404);
+        }
+    
+        return response()->json([
+            'data' => $histories
+        ]);
+    }
+    
+
     /**
      * Update the specified Visa Status History record.
      */

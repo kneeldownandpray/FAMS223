@@ -12,7 +12,7 @@
         dense
         flat
         size="1.5em"
-        color="primary"
+        color="#353535;"
       />
       <div class="video-list" ref="videoList">
         <div class="video-container" v-for="(video, index) in videos" :key="video.id">
@@ -248,7 +248,7 @@ export default {
     position: absolute;
     bottom: 0;
     width: 100%;
-    background: rgba(0, 0, 0, 0.6);
+    background: #353535;
     color: white;
     padding: 10px;
     text-align: center;
@@ -305,7 +305,7 @@ export default {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.8);
+    background: #353535;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -321,13 +321,13 @@ export default {
     position: absolute;
     top: 20px;
     left: 20px;
-    background: rgba(0, 0, 0, 0.7);
+    background: #353535;
     color: white;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
   }
-  .video-info{ padding: 10px;  background-color: rgba(15, 23, 42, 0.89); }
+  .video-info{ padding: 10px;  background-color:#353535;}
   .video-description{ font-size: 20px; color: #fff; }
   .video-title{ font-size: 27px;  color: #fff;  font-weight: 600;}
   
