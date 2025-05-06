@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\VisaStatus;
 use App\Models\User;
 use App\Models\Skill;
-
+use App\Models\ArchivedVisaStatus;
 
 class VisaStatusHistoryController extends Controller
 {
@@ -63,18 +63,60 @@ class VisaStatusHistoryController extends Controller
     /**
      * Store a newly created Visa Status History record.
      */
-    public function store(Request $request)
+//     public function store(Request $request)
+// {
+//     $user = Auth::user();
+
+//     // Append approved_by and default step
+//     $request->merge([
+//         'approved_by' => $user->id,
+//         'step' => 'initiated', // or any default value you'd like
+//         'completed_at' => now()
+//     ]);
+
+//     // Validate request
+//     $validator = Validator::make($request->all(), [
+//         'user_id' => 'required|exists:users,id',
+//         'employer_id' => 'required|exists:users,id',
+//         'visa_status_id' => 'required|exists:visa_statuses,id',
+//         'approved_by' => 'required|exists:users,id',
+//         'profession' => 'nullable|string',
+//         'step' => 'required|string',
+//         'status' => 'required|integer',
+//         'completed_at' => 'nullable|date',
+//     ]);
+
+//     if ($validator->fails()) {
+//         return response()->json(['errors' => $validator->errors()], 400);
+//     }
+
+//     // Create Visa Status History
+//     $visaStatusHistory = VisaStatusHistory::create($request->all());
+
+//     // Update corresponding VisaStatus.application_status to 0
+//     $visaStatus = VisaStatus::find($request->visa_status_id);
+//     if ($visaStatus) {
+//         $visaStatus->application_status = 0;
+//         $visaStatus->save();
+//     }
+
+//     return response()->json([
+//         'message' => 'Visa Status History created and Visa Status updated successfully',
+//         'data' => $visaStatusHistory
+//     ], 201);
+// }
+public function store(Request $request)
 {
     $user = Auth::user();
 
-    // Append approved_by and default step
+    // I-merge ang mga default na field
     $request->merge([
         'approved_by' => $user->id,
-        'step' => 'initiated', // or any default value you'd like
+        'step' => 'initiated',
         'completed_at' => now()
     ]);
 
-    // Validate request
+    // I-validate ang request data
     $validator = Validator::make($request->all(), [
         'user_id' => 'required|exists:users,id',
         'employer_id' => 'required|exists:users,id',
@@ -90,21 +132,47 @@ class VisaStatusHistoryController extends Controller
         return response()->json(['errors' => $validator->errors()], 400);
     }
 
-    // Create Visa Status History
+    // Hanapin ang VisaStatus gamit ang visa_status_id
+    $visaStatus = VisaStatus::find($request->visa_status_id);
+
+    if (!$visaStatus) {
+        return response()->json(['message' => 'Visa Status not found'], 404);
+    }
+
+    // I-update ang application_status ng VisaStatus
+    $visaStatus->application_status = 0;
+    $visaStatus->save();
+
+    // Lumikha ng bagong VisaStatusHistory
     $visaStatusHistory = VisaStatusHistory::create($request->all());
 
-    // Update corresponding VisaStatus.application_status to 0
-    $visaStatus = VisaStatus::find($request->visa_status_id);
-    if ($visaStatus) {
-        $visaStatus->application_status = 0;
-        $visaStatus->save();
+    // I-archive ang kasalukuyang VisaStatus sa ArchivedVisaStatus
+    $archivedVisaStatus = ArchivedVisaStatus::create([
+        'user_id' => $visaStatus->user_id,
+        'visa_status_history_id' => $visaStatusHistory->id,
+        'application_received' => $visaStatus->application_received,
+        'interview_employer_confirmation' => $visaStatus->interview_employer_confirmation,
+        'requirements' => $visaStatus->requirements,
+        'skill_assessment' => $visaStatus->skill_assessment,
+        'visa_preparation' => $visaStatus->visa_preparation,
+        'visa_lodged' => $visaStatus->visa_lodged,
+        'medical_biometrics' => $visaStatus->medical_biometrics,
+        'awaiting_decision' => $visaStatus->awaiting_decision,
+        'visa_outcome' => $visaStatus->visa_outcome,
+        'ready_to_fly' => $visaStatus->ready_to_fly,
+    ]);
+
+    // I-delete ang orihinal na VisaStatus kung na-save na ang history at archive
+    if ($visaStatusHistory && $archivedVisaStatus) {
+        $visaStatus->delete();
     }
 
     return response()->json([
-        'message' => 'Visa Status History created and Visa Status updated successfully',
+        'message' => 'Visa Status History created, Visa Status archived, and original Visa Status deleted successfully',
         'data' => $visaStatusHistory
     ], 201);
 }
+
 
     /**
      * Display the specified Visa Status History record.

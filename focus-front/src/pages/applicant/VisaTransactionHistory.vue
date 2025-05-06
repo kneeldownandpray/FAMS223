@@ -151,7 +151,7 @@ export default {
   },
   computed: {
     filteredVisaStatus() {
-    const { id, user_id, application_status, created_at, updated_at, skill_assessment, ...rest } = this.selected_row.visa_status;
+    const { id, user_id, application_status, created_at, updated_at, skill_assessment, ...rest } = this.selected_row;
 
     const filtered = { ...rest };
 

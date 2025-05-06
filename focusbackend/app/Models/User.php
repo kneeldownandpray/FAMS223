@@ -69,5 +69,9 @@ public function visaStatus()
 {
     return $this->hasOne(VisaStatus::class, 'user_id');
 }
+public function latestVisaStatus()
+{
+    return $this->hasOne(VisaStatus::class)->latestOfMany();
+}
     
 }
